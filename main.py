@@ -23,9 +23,9 @@ def start_msg(message: telebot.types.Message):
 
 
 @bot.message_handler(commands=['slavaukraini'])
-async def nicewords_msg(message: telebot.types.Message):
+def nicewords_msg(message: telebot.types.Message):
     bot.reply_to(message, taunts.generate_some_taunts())
-    await bot.send_message("i am machine (:")
+    bot.send_message("i am machine (:")
 
 
 @app_server.route("/" + BOT_TOKEN, methods=["POST"])
