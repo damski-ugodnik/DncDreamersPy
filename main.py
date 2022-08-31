@@ -1,6 +1,7 @@
 import os
 import telebot
 import logging
+import nice_words_generator
 from flask import Flask, request
 from config import *
 
@@ -14,6 +15,10 @@ logger.setLevel(logging.DEBUG)
 def start_msg(message: telebot.types.Message):
     username = message.from_user.username
     bot.reply_to(message, f"Hello, {username}")
+
+@bot.message_handler(commands=['slavaukraini'])
+def nicewords_msg(message: telebot.types.Message):
+    bot.reply_to(message, nice_words_generator.TauntsGenerator.generate_some_taunts())
 
 
 @app_server.route("/" + BOT_TOKEN, methods=["POST"])
