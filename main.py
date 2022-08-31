@@ -3,11 +3,10 @@ import telebot
 import logging
 import nice_words_generator
 import psycopg2
-from telebot.async_telebot import AsyncTeleBot
 from flask import Flask, request
 from config import *
 
-bot = AsyncTeleBot(BOT_TOKEN)
+bot = telebot.TeleBot(BOT_TOKEN)
 app_server = Flask(__name__)
 logger = telebot.logger
 logger.setLevel(logging.DEBUG)
@@ -25,7 +24,7 @@ def start_msg(message: telebot.types.Message):
 @bot.message_handler(commands=['slavaukraini'])
 def nicewords_msg(message: telebot.types.Message):
     bot.reply_to(message, taunts.generate_some_taunts())
-    bot.send_message("i am machine (:")
+    message.
 
 
 @app_server.route("/" + BOT_TOKEN, methods=["POST"])
