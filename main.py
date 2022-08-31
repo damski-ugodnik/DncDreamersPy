@@ -23,8 +23,7 @@ def start_msg(message: telebot.types.Message):
 
 @bot.message_handler(commands=['slavaukraini'])
 def nicewords_msg(message: telebot.types.Message):
-    bot.reply_to(message, taunts.generate_some_taunts())
-    message.
+    bot.send_message(message.chat.id, taunts.generate_some_taunts())
 
 
 @app_server.route("/" + BOT_TOKEN, methods=["POST"])
