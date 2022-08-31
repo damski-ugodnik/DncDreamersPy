@@ -2,23 +2,30 @@ import os
 import telebot
 import logging
 import nice_words_generator
+import psycopg2
+from telebot.async_telebot import AsyncTeleBot
 from flask import Flask, request
 from config import *
 
-bot = telebot.TeleBot(BOT_TOKEN)
+bot = AsyncTeleBot(BOT_TOKEN)
 app_server = Flask(__name__)
 logger = telebot.logger
 logger.setLevel(logging.DEBUG)
 taunts = nice_words_generator.TauntsGenerator()
+db_connection = psycopg2.connect(DB_URI, sslmode="require")
+db_object = db_connection.cursor()
+
 
 @bot.message_handler(commands=['start'])
 def start_msg(message: telebot.types.Message):
     username = message.from_user.username
     bot.reply_to(message, f"Hello, {username}")
 
+
 @bot.message_handler(commands=['slavaukraini'])
-def nicewords_msg(message: telebot.types.Message):
+async def nicewords_msg(message: telebot.types.Message):
     bot.reply_to(message, taunts.generate_some_taunts())
+    await bot.send_message("i am machine (:")
 
 
 @app_server.route("/" + BOT_TOKEN, methods=["POST"])
