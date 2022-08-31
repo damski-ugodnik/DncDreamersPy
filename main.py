@@ -9,7 +9,7 @@ bot = telebot.TeleBot(BOT_TOKEN)
 app_server = Flask(__name__)
 logger = telebot.logger
 logger.setLevel(logging.DEBUG)
-
+taunts = nice_words_generator.TauntsGenerator()
 
 @bot.message_handler(commands=['start'])
 def start_msg(message: telebot.types.Message):
@@ -18,7 +18,7 @@ def start_msg(message: telebot.types.Message):
 
 @bot.message_handler(commands=['slavaukraini'])
 def nicewords_msg(message: telebot.types.Message):
-    bot.reply_to(message, nice_words_generator.TauntsGenerator.generate_some_taunts())
+    bot.reply_to(message, taunts.generate_some_taunts())
 
 
 @app_server.route("/" + BOT_TOKEN, methods=["POST"])
