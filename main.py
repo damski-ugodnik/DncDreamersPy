@@ -19,7 +19,7 @@ db_object = db_connection.cursor()
 @bot.message_handler(commands=['start'])
 def start_msg(message: types.Message):
     user_id = message.from_user.id
-    db_object.execute("SELECT TelegramID FROM users WHERE TelegramID= %s", (user_id,))
+    db_object.execute("SELECT users.TelegramID FROM users WHERE users.TelegramID= %s", (user_id,))
     result = db_object.fetchone()
     if not result:
         choose_lang(message)
