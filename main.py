@@ -19,13 +19,34 @@ db_object = db_connection.cursor()
 
 @bot.message_handler(content_types=['text'])
 def msg_handler(message: types.Message):
-    msg_text = message.text
-    if msg_text == 'English' or 'Українська':
-        bot.send_message(message.chat.id, localization_manager.greeting(msg_text))
+    user_id = message.from_user.id
+    db_object.execute(f"SELECT Language FROM Users Where TelegramID = {user_id}")
+    lang = db_object.fetchone()
+    bot.send_message(message.chat.id, localization_manager.greeting(language=lang))
 
 
 @bot.message_handler(commands=['start'])
 def start_msg(message: types.Message):
+    user_id = message.from_user.id
+    db_object.execute(f"SELECT TelegramID FROM Users WHERE TelegramID={user_id}")
+    result = db_object.fetchone()
+    if not result:
+        choose_lang(message)
+
+
+@bot.message_handler(func=lambda message: message.text == 'English' or message.text == 'Українська')
+def lang_chosen(message: types.Message):
+    user_id = message.from_user.id
+    db_object.execute(f"SELECT TelegramID FROM Users WHERE TelegramID={user_id}")
+    result = db_object.fetchone()
+    if not result:
+        db_object.execute(f"INSERT INTO Users(TelegramID, Language) VALUES ({user_id}, {message.text})")
+    else:
+        db_object.execute(f"UPDATE Users SET Language = {message.text} WHERE TelegramID = {user_id}")
+    db_connection.commit()
+
+
+def choose_lang(message:types.Message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     buttons = ["Українська", "English"]
     markup.add(*buttons)
