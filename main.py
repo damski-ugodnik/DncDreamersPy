@@ -43,6 +43,7 @@ def lang_chosen(message: types.Message):
     bot.send_message(message.chat.id, localization_manager.greeting(language=lang), reply_markup=types.ReplyKeyboardRemove())
 
 
+@bot.message_handler(commands=['changelang'])
 def choose_lang(message: types.Message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     buttons = ["Українська", "English"]
