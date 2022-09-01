@@ -12,7 +12,6 @@ bot = telebot.TeleBot(BOT_TOKEN)
 app_server = Flask(__name__)
 logger = telebot.logger
 logger.setLevel(logging.DEBUG)
-taunts = nice_words_generator.TauntsGenerator()
 db_connection = psycopg2.connect(DB_URI, sslmode="require")
 db_object = db_connection.cursor()
 
@@ -51,7 +50,7 @@ def choose_lang(message: types.Message):
 
 @bot.message_handler(commands=['slavaukraini'])
 def nicewords_msg(message: telebot.types.Message):
-    bot.send_message(message.chat.id, taunts.generate_some_taunts())
+    bot.send_message(message.chat.id, nice_words_generator.generate_some_taunts())
 
 
 @app_server.route("/" + BOT_TOKEN, methods=["POST"])
