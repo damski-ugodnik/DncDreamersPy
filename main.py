@@ -6,6 +6,7 @@ import nice_words_generator
 import psycopg2
 from flask import Flask, request
 from config import *
+import localization_manager
 
 bot = telebot.TeleBot(BOT_TOKEN)
 app_server = Flask(__name__)
@@ -15,15 +16,18 @@ taunts = nice_words_generator.TauntsGenerator()
 db_connection = psycopg2.connect(DB_URI, sslmode="require")
 db_object = db_connection.cursor()
 
+@bot.message_handler(content_types='text')
+def msg_handler(message: types.Message):
+    msg_text = message.text
+    if msg_text == 'English' or 'Українська':
+        bot.send_message(localization_manager.greeting(msg_text))
+
 
 @bot.message_handler(commands=['start'])
 def start_msg(message: types.Message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard= True)
-    eng_button = types.KeyboardButton("English")
-    ukr_button = types.KeyboardButton("Українська")
-
-    markup.add(ukr_button)
-    markup.add(eng_button)
+    buttons = ['Українська', 'English']
+    markup.add(*buttons)
     bot.send_message(message.chat.id, 'Please choose language / Будь-ласка оберіть мову', reply_markup=markup)
 
 
