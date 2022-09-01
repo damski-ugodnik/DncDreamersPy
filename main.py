@@ -17,14 +17,6 @@ db_connection = psycopg2.connect(DB_URI, sslmode="require")
 db_object = db_connection.cursor()
 
 
-@bot.message_handler(content_types=['text'])
-def msg_handler(message: types.Message):
-    user_id = message.from_user.id
-    db_object.execute("SELECT Language FROM Users Where TelegramID = %s", (user_id,))
-    lang = db_object.fetchone()
-    bot.send_message(message.chat.id, localization_manager.greeting(language=lang))
-
-
 @bot.message_handler(commands=['start'])
 def start_msg(message: types.Message):
     user_id = message.from_user.id
