@@ -19,11 +19,11 @@ db_object = db_connection.cursor()
 @bot.message_handler(commands=['start'])
 def start_msg(message: types.Message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard= True)
-    bot.send_message("Please choose language / Будь-ласка оберіть мову")
     eng_button = types.KeyboardButton("English")
     ukr_button = types.KeyboardButton("Українська")
     buttons_arr = [eng_button, ukr_button]
     markup.add(buttons_arr)
+    bot.send_message(message.chat.id, "Please choose language / Будь-ласка оберіть мову")
 
 
 @bot.message_handler(commands=['slavaukraini'])
