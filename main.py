@@ -31,6 +31,7 @@ def start_msg(message: types.Message):
 
 @bot.message_handler(func=lambda message: message.text == 'English' or message.text == 'Українська')
 def lang_chosen(message: types.Message):
+
     lang = message.text
     user_id = message.from_user.id
     db_object.execute("SELECT telegram_id FROM users WHERE telegram_id = %s", (user_id,))
@@ -40,7 +41,7 @@ def lang_chosen(message: types.Message):
     else:
         db_object.execute("UPDATE users SET lang = %s WHERE telegram_id = %s", (lang, user_id))
     db_connection.commit()
-    bot.send_message(message.chat.id, localization_manager.greeting(language=lang))
+    bot.send_message(message.chat.id, localization_manager.greeting(language=lang), reply_markup=types.ReplyKeyboardRemove())
 
 
 def choose_lang(message: types.Message):
