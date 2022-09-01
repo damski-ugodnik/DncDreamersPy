@@ -20,7 +20,7 @@ db_object = db_connection.cursor()
 @bot.message_handler(content_types=['text'])
 def msg_handler(message: types.Message):
     user_id = message.from_user.id
-    db_object.execute("SELECT Language FROM Users Where TelegramID = %s", user_id)
+    db_object.execute("SELECT Language FROM Users Where TelegramID = %s", (user_id,))
     lang = db_object.fetchone()
     bot.send_message(message.chat.id, localization_manager.greeting(language=lang))
 
@@ -28,12 +28,12 @@ def msg_handler(message: types.Message):
 @bot.message_handler(commands=['start'])
 def start_msg(message: types.Message):
     user_id = message.from_user.id
-    db_object.execute("SELECT TelegramID FROM Users WHERE TelegramID= %s", user_id)
+    db_object.execute("SELECT TelegramID FROM Users WHERE TelegramID= %s", (user_id,))
     result = db_object.fetchone()
     if not result:
         choose_lang(message)
     else:
-        db_object.execute("SELECT Language FROM Users Where TelegramID = %s", user_id)
+        db_object.execute("SELECT Language FROM Users Where TelegramID = %s", (user_id,))
         lang = db_object.fetchone()
         bot.send_message(message.chat.id, localization_manager.greeting(language=lang))
 
@@ -41,12 +41,12 @@ def start_msg(message: types.Message):
 @bot.message_handler(func=lambda message: message.text == 'English' or message.text == 'Українська')
 def lang_chosen(message: types.Message):
     user_id = message.from_user.id
-    db_object.execute("SELECT TelegramID FROM Users WHERE TelegramID = %s", user_id)
+    db_object.execute("SELECT TelegramID FROM Users WHERE TelegramID = %s", (user_id,))
     result = db_object.fetchone()
     if not result:
         db_object.execute("INSERT INTO Users(TelegramID, Language) VALUES (%s, %s)", (user_id, message.text))
     else:
-        db_object.execute("UPDATE Users SET Language = %s WHERE TelegramID = %s", (message.text,user_id))
+        db_object.execute("UPDATE Users SET Language = %s WHERE TelegramID = %s", (message.text, user_id))
     db_connection.commit()
 
 
