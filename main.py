@@ -19,26 +19,28 @@ db_object = db_connection.cursor()
 @bot.message_handler(commands=['start'])
 def start_msg(message: types.Message):
     user_id = message.from_user.id
-    db_object.execute("SELECT users.TelegramID FROM users WHERE users.TelegramID= %s", (user_id,))
+    db_object.execute(f"SELECT telegram_id FROM users WHERE telegram_id= %s", (user_id,))
     result = db_object.fetchone()
     if not result:
         choose_lang(message)
     else:
-        db_object.execute("SELECT Language FROM users Where TelegramID = %s", (user_id,))
+        db_object.execute(f"SELECT lang FROM users Where telegram_id = %s", (user_id,))
         lang = db_object.fetchone()
         bot.send_message(message.chat.id, localization_manager.greeting(language=lang))
 
 
 @bot.message_handler(func=lambda message: message.text == 'English' or message.text == 'Українська')
 def lang_chosen(message: types.Message):
+    lang = message.text
     user_id = message.from_user.id
-    db_object.execute("SELECT TelegramID FROM users WHERE TelegramID = %s", (user_id,))
+    db_object.execute("SELECT telegram_id FROM users WHERE telegram_id = %s", (user_id,))
     result = db_object.fetchone()
     if not result:
-        db_object.execute("INSERT INTO users(TelegramID, Language) VALUES (%s, %s)", (user_id, message.text))
+        db_object.execute("INSERT INTO users(telegram_id, lang) VALUES (%s, %s)", (user_id, lang))
     else:
-        db_object.execute("UPDATE users SET Language = %s WHERE TelegramID = %s", (message.text, user_id))
+        db_object.execute("UPDATE users SET lang = %s WHERE telegram_id = %s", (lang, user_id))
     db_connection.commit()
+    bot.send_message(message.chat.id, localization_manager.greeting(language=lang))
 
 
 def choose_lang(message: types.Message):
