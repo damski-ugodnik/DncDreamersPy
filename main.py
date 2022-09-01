@@ -24,14 +24,13 @@ def start_msg(message: types.Message):
     if not result:
         choose_lang(message)
     else:
-        db_object.execute(f"SELECT lang FROM users Where telegram_id = %s", (user_id,))
+        db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
         lang = db_object.fetchone()
-        bot.send_message(message.chat.id, localization_manager.greeting(language=lang))
+        bot.send_message(message.chat.id, localization_manager.greeting(language=lang),reply_markup=types.ReplyKeyboardRemove())
 
 
 @bot.message_handler(func=lambda message: message.text == 'English' or message.text == 'Українська')
 def lang_chosen(message: types.Message):
-
     lang = message.text
     user_id = message.from_user.id
     db_object.execute("SELECT telegram_id FROM users WHERE telegram_id = %s", (user_id,))
