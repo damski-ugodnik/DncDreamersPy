@@ -1,5 +1,6 @@
 import os
 import telebot
+from telebot import types
 import logging
 import nice_words_generator
 import psycopg2
@@ -16,9 +17,13 @@ db_object = db_connection.cursor()
 
 
 @bot.message_handler(commands=['start'])
-def start_msg(message: telebot.types.Message):
-    username = message.from_user.username
-    bot.reply_to(message, f"Hello, {username}")
+def start_msg(message: types.Message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard= True)
+    bot.send_message("Please choose language / Будь-ласка оберіть мову")
+    eng_button = types.KeyboardButton("English")
+    ukr_button = types.KeyboardButton("Українська")
+    buttons_arr = [eng_button, ukr_button]
+    markup.add(buttons_arr)
 
 
 @bot.message_handler(commands=['slavaukraini'])
