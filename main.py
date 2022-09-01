@@ -17,11 +17,11 @@ db_connection = psycopg2.connect(DB_URI, sslmode="require")
 db_object = db_connection.cursor()
 
 
-@bot.message_handler(content_types='text')
+@bot.message_handler(content_types=['text'])
 def msg_handler(message: types.Message):
     msg_text = message.text
     if msg_text == 'English' or 'Українська':
-        bot.send_message(localization_manager.greeting(msg_text))
+        bot.send_message(message.chat.id, localization_manager.greeting(msg_text))
 
 
 @bot.message_handler(commands=['start'])
