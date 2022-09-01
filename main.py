@@ -26,7 +26,7 @@ def start_msg(message: types.Message):
     else:
         db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
         lang = f"{db_object.fetchone()[0].strip()}"
-        bot.send_message(message.chat.id, locale_manager.greeting(language=lang), reply_markup=types.ReplyKeyboardRemove())
+        bot.send_message(message.chat.id, locale_manager.greeting(lang), reply_markup=types.ReplyKeyboardRemove())
 
 
 @bot.message_handler(func=lambda message: message.text == 'English' or message.text == 'Українська')
