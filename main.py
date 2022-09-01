@@ -6,7 +6,7 @@ import nice_words_generator
 import psycopg2
 from flask import Flask, request
 from config import *
-import localization_manager
+import locale_manager
 
 bot = telebot.TeleBot(BOT_TOKEN)
 app_server = Flask(__name__)
@@ -26,7 +26,7 @@ def start_msg(message: types.Message):
     else:
         db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
         lang = f"{db_object.fetchone()[0].strip()}"
-        bot.send_message(message.chat.id, localization_manager.greeting(language=lang), reply_markup=types.ReplyKeyboardRemove())
+        bot.send_message(message.chat.id, locale_manager.greeting(language=lang), reply_markup=types.ReplyKeyboardRemove())
 
 
 @bot.message_handler(func=lambda message: message.text == 'English' or message.text == 'Українська')
@@ -35,12 +35,15 @@ def lang_chosen(message: types.Message):
     user_id = message.from_user.id
     db_object.execute("SELECT telegram_id FROM users WHERE telegram_id = %s", (user_id,))
     result = db_object.fetchone()
+    msg_to_send: str
     if not result:
         db_object.execute("INSERT INTO users(telegram_id, lang) VALUES (%s, %s)", (user_id, lang))
+        msg_to_send = locale_manager.greeting(language=lang)
     else:
         db_object.execute("UPDATE users SET lang = %s WHERE telegram_id = %s", (lang, user_id))
+        msg_to_send = locale_manager.lang_choice(lang)
     db_connection.commit()
-    bot.send_message(message.chat.id, localization_manager.greeting(language=lang), reply_markup=types.ReplyKeyboardRemove())
+    bot.send_message(message.chat.id, msg_to_send, reply_markup=types.ReplyKeyboardRemove())
 
 
 @bot.message_handler(commands=['changelang'])
