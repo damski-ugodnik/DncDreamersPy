@@ -23,7 +23,7 @@ def start_msg(message: types.Message):
     ukr_button = types.KeyboardButton("Українська")
     buttons_arr = [eng_button, ukr_button]
     markup.add(buttons_arr)
-    bot.send_message(message.chat.id, "Please choose language / Будь-ласка оберіть мову")
+    bot.send_message(message.chat.id, "Please choose language / Будь-ласка оберіть мову", reply_markup=markup)
 
 
 @bot.message_handler(commands=['slavaukraini'])
