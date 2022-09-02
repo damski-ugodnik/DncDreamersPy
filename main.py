@@ -16,6 +16,20 @@ db_connection = psycopg2.connect(DB_URI, sslmode="require")
 db_object = db_connection.cursor()
 
 
+def gen_main_menu():
+    main_menu = types.InlineKeyboardMarkup()
+    main_menu.add(
+        types.InlineKeyboardButton("", callback_data="enroll"),
+        types.InlineKeyboardButton("", callback_data="check_enrollments")
+    )
+    return main_menu
+
+
+@bot.callback_query_handler(func=lambda call: call.data == 'enroll')
+def enroll_user(call: types.CallbackQuery):
+    bot.answer_callback_query(callback_query_id=call.id,text="okay then")
+
+
 @bot.message_handler(commands=['start'])
 def start_msg(message: types.Message):
     user_id = message.from_user.id
@@ -26,7 +40,7 @@ def start_msg(message: types.Message):
     else:
         db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
         lang = f"{db_object.fetchone()[0].strip()}"
-        bot.send_message(message.chat.id, locale_manager.greeting(lang), reply_markup=types.ReplyKeyboardRemove())
+        bot.send_message(message.chat.id, locale_manager.greeting(lang), reply_markup=gen_main_menu())
 
 
 @bot.message_handler(func=lambda message: message.text == 'English' or message.text == 'Українська')
