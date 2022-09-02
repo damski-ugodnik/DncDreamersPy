@@ -16,18 +16,32 @@ db_connection = psycopg2.connect(DB_URI, sslmode="require")
 db_object = db_connection.cursor()
 
 
-def gen_main_menu():
+def get_lang_from_db(user_id: int):
+    db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
+    lang = f"{db_object.fetchone()[0].strip()}"
+    return lang
+
+
+@bot.message_handler(commands=['mainmenu'])
+def show_menu(message: types.Message):
+    user_id = message.from_user.id
+    lang = get_lang_from_db(user_id=user_id)
+    bot.send_message(user_id, locale_manager.main_menu(lang=lang), reply_markup=gen_main_menu(lang=lang))
+
+
+def gen_main_menu(lang: str):
     main_menu = types.InlineKeyboardMarkup()
+    buttons_text = locale_manager.menu_buttons(lang=lang)
     main_menu.add(
-        types.InlineKeyboardButton("enroll", callback_data="enroll"),
-        types.InlineKeyboardButton("show", callback_data="check_enrollments")
+        types.InlineKeyboardButton(f"{buttons_text[0]}", callback_data="enroll"),
+        types.InlineKeyboardButton(f"{buttons_text[1]}", callback_data="check_enrollments")
     )
     return main_menu
 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'enroll')
 def enroll_user(call: types.CallbackQuery):
-    bot.answer_callback_query(callback_query_id=call.id,text="okay then")
+    pass
 
 
 @bot.message_handler(commands=['start'])
@@ -38,9 +52,9 @@ def start_msg(message: types.Message):
     if not result:
         choose_lang(message)
     else:
-        db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
-        lang = f"{db_object.fetchone()[0].strip()}"
-        bot.send_message(message.chat.id, locale_manager.greeting(lang), reply_markup=gen_main_menu())
+        lang = get_lang_from_db(user_id=user_id)
+        bot.send_message(message.chat.id, locale_manager.greeting(lang), reply_markup=types.ReplyKeyboardRemove())
+        show_menu(message=message)
 
 
 @bot.message_handler(func=lambda message: message.text == 'English' or message.text == 'Українська')
@@ -52,12 +66,13 @@ def lang_chosen(message: types.Message):
     msg_to_send: str
     if not result:
         db_object.execute("INSERT INTO users(telegram_id, lang) VALUES (%s, %s)", (user_id, lang))
-        msg_to_send = locale_manager.greeting(language=lang)
+        msg_to_send = locale_manager.greeting(lang=lang)
     else:
         db_object.execute("UPDATE users SET lang = %s WHERE telegram_id = %s", (lang, user_id))
         msg_to_send = locale_manager.lang_choice(lang)
     db_connection.commit()
     bot.send_message(message.chat.id, msg_to_send, reply_markup=types.ReplyKeyboardRemove())
+    show_menu(message=message)
 
 
 @bot.message_handler(commands=['changelang'])

@@ -11,3 +11,15 @@ def lang_choice(lang: str):
         return f'Language successfully set to : {lang}'
     elif lang == 'Українська':
         return f'Мову успішно встановлено на: {lang}'
+
+
+def main_menu(lang: str):
+    match lang:
+        case 'English': return 'Main menu'
+        case 'Українська': return 'Головне меню'
+
+
+def menu_buttons(lang: str):
+    match lang:
+        case 'English': return ['Enroll', 'Your enrollments']
+        case 'Українська': return ['Записатися', 'Ваші записи']
