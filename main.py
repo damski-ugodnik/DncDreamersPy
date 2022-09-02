@@ -19,8 +19,8 @@ db_object = db_connection.cursor()
 def gen_main_menu():
     main_menu = types.InlineKeyboardMarkup()
     main_menu.add(
-        types.InlineKeyboardButton("", callback_data="enroll"),
-        types.InlineKeyboardButton("", callback_data="check_enrollments")
+        types.InlineKeyboardButton("enroll", callback_data="enroll"),
+        types.InlineKeyboardButton("show", callback_data="check_enrollments")
     )
     return main_menu
 
