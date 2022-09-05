@@ -1,14 +1,16 @@
 import os
 import telebot
 from telebot import types
+from telebot import async_telebot
 import logging
 import nice_words_generator
 import psycopg2
 from flask import Flask, request
 from config import *
 import locale_manager
+import asyncio
 
-bot = telebot.TeleBot(BOT_TOKEN)
+bot = async_telebot.AsyncTeleBot(BOT_TOKEN)
 app_server = Flask(__name__)
 logger = telebot.logger
 logger.setLevel(logging.DEBUG)
@@ -45,7 +47,7 @@ def enroll_user(call: types.CallbackQuery):
 
 
 @bot.message_handler(commands=['start'])
-def start_msg(message: types.Message):
+async def start_msg(message: types.Message):
     user_id = message.from_user.id
     db_object.execute(f"SELECT telegram_id FROM users WHERE telegram_id= %s", (user_id,))
     result = db_object.fetchone()
@@ -53,7 +55,7 @@ def start_msg(message: types.Message):
         choose_lang(message)
     else:
         lang = get_lang_from_db(user_id=user_id)
-        bot.send_message(message.chat.id, locale_manager.greeting(lang), reply_markup=types.ReplyKeyboardRemove())
+        await bot.send_message(message.chat.id, locale_manager.greeting(lang), reply_markup=types.ReplyKeyboardRemove())
         show_menu(message=message)
 
 
@@ -89,10 +91,10 @@ def nicewords_msg(message: telebot.types.Message):
 
 
 @app_server.route("/" + BOT_TOKEN, methods=["POST"])
-def redirect_msg():
+async def redirect_msg():
     json_string = request.get_data().decode("utf-8")
     update = telebot.types.Update.de_json(json_string)
-    bot.process_new_updates([update])
+    asyncio.run(main=bot.process_new_updates([update]))
     return "!", 200
 
 
