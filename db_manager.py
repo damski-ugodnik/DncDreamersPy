@@ -4,7 +4,9 @@ from datetime import date
 
 def fetch_event(event_id: int):
     db_object.execute(f"SELECT * FROM events WHERE id = {event_id}")
-    result = db_object.fetchall()
+
+    result = db_object.fetchone()
+
     res_event = Event(event_id=result[0],
                       name=result[1].strip(),
                       date_of_issue=result[2],
