@@ -10,7 +10,7 @@ def fetch_events():
     for event_row in result:
         event = Event(event_id=event_row[0],
                       name=event_row[1].strip(),
-                      date_of_issue=event_row[2].strip(),
+                      date_of_issue=event_row[2],
                       town=event_row[3].strip(),
                       place=event_row[4].strip(),
                       price=int(event_row[5].strip()),
