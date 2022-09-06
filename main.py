@@ -34,7 +34,7 @@ def gen_main_menu(lang: str):
     main_menu = types.InlineKeyboardMarkup()
     buttons_text = locale_manager.menu_buttons(lang=lang)
     main_menu.add(
-        types.InlineKeyboardButton(f"{buttons_text[0]}", callback_data="enroll"),
+        types.InlineKeyboardButton(f"{buttons_text[0]}", callback_data="show_events"),
         types.InlineKeyboardButton(f"{buttons_text[1]}", callback_data="check_enrollments")
     )
     return main_menu
@@ -43,12 +43,12 @@ def gen_main_menu(lang: str):
 def create_events_list(events: list):
     events_menu = types.InlineKeyboardMarkup(row_width=1)
     for event in events:
-        button = types.InlineKeyboardButton(text=f"{event.name}", callback_data=f"{event.event_id}"+"_event")
+        button = types.InlineKeyboardButton(text=f"{event.name}", callback_data=f"{event.event_id}" + "_event")
         events_menu.add(button, row_width=1)
     return events_menu
 
 
-@bot.callback_query_handler(func=lambda call: call.data == 'enroll')
+@bot.callback_query_handler(func=lambda call: call.data == 'show_events')
 def show_events(call: types.CallbackQuery):
     events = db_manager.fetch_events()
     user_id = call.from_user.id
@@ -59,6 +59,30 @@ def show_events(call: types.CallbackQuery):
 @bot.callback_query_handler(func=lambda call: str(call.data).find('_event') > -1)
 def show_chosen_event(call: types.CallbackQuery):
     bot.answer_callback_query(callback_query_id=call.id, text=call.data)
+    event_id = int(call.data[:call.data.find('_event')])
+
+    def configure_event_msg():
+        user_id = call.from_user.id
+        event = db_manager.fetch_event(event_id=event_id)
+
+        def gen_markup_for_event_msg():
+            markup = types.InlineKeyboardMarkup(row_width=2)
+            markup.add(types.InlineKeyboardButton('Enroll', callback_data='enroll'),
+                       types.InlineKeyboardButton('Back', callback_data='show_events'))
+            return markup
+
+        def configure_text():
+            text = f"{event.name}" \
+                   f"{event.date_of_issue}" \
+                   f"{event.town}" \
+                   f"{event.place}" \
+                   f"{event.price}" \
+                   f"{event.additional}"
+            return text
+
+        bot.send_message(user_id, configure_text(), reply_markup=gen_markup_for_event_msg())
+
+    configure_event_msg()
 
 
 @bot.message_handler(commands=['start'])

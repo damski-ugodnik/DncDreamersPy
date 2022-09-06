@@ -1,6 +1,18 @@
 from main import db_object, db_connection
 from datetime import date
-import asyncio
+
+
+def fetch_event(event_id: int):
+    db_object.execute(f"SELECT * FROM events WHERE id = {event_id}")
+    result = db_object.fetchall()
+    res_event = Event(event_id=result[0],
+                      name=result[1].strip(),
+                      date_of_issue=result[2],
+                      town=result[3].strip(),
+                      place=result[4].strip(),
+                      price=int(result[5]),
+                      additional=result[6].strip())
+    return res_event
 
 
 def fetch_events():
@@ -39,7 +51,6 @@ def fetch_enrollments(user_id: int):
                                 paid=enrollment_row[12]
                                 )
         enrollments.append(enrollment)
-        asyncio.sleep(0)
     return enrollments
 
 
