@@ -15,7 +15,7 @@ def fetch_events():
                       place=event_row[4].strip(),
                       price=int(event_row[5]),
                       additional=event_row[6].strip())
-        events.append(__object=event)
+        events.append(event)
     return events
 
 
@@ -38,7 +38,7 @@ def fetch_enrollments(user_id: int):
                                 allows_info_processing=enrollment_row[11],
                                 paid=enrollment_row[12]
                                 )
-        enrollments.append(__object=enrollment)
+        enrollments.append(enrollment)
         asyncio.sleep(0)
     return enrollments
 
