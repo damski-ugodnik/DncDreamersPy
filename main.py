@@ -56,7 +56,7 @@ def show_events(call: types.CallbackQuery):
     bot.send_message(chat_id=user_id, text="events:", reply_markup=create_events_list(events=events))
 
 
-@bot.callback_query_handler(func=lambda call: str(call.data).find(__sub='_event') > -1)
+@bot.callback_query_handler(func=lambda call: str(call.data).find('_event') > -1)
 def show_chosen_event(call: types.CallbackQuery):
     bot.answer_callback_query(callback_query_id=call.id, text=call.data)
 
