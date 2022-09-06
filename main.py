@@ -72,12 +72,12 @@ def show_chosen_event(call: types.CallbackQuery):
             return markup
 
         def configure_text():
-            text = f"{event.name}" \
-                   f"{event.date_of_issue}" \
-                   f"{event.town}" \
-                   f"{event.place}" \
-                   f"{event.price}" \
-                   f"{event.additional}"
+            text = f"{event.name}\n" \
+                   f"{event.date_of_issue}\n" \
+                   f"{event.town}\n" \
+                   f"{event.place}\n" \
+                   f"{event.price}\n" \
+                   f"{event.additional}\n"
             return text
 
         bot.send_message(user_id, configure_text(), reply_markup=gen_markup_for_event_msg())
