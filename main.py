@@ -7,6 +7,7 @@ import psycopg2
 from flask import Flask, request
 from config import *
 import locale_manager
+import db_manager
 
 bot = telebot.TeleBot(BOT_TOKEN)
 app_server = Flask(__name__)
@@ -39,9 +40,25 @@ def gen_main_menu(lang: str):
     return main_menu
 
 
+def create_events_list(events: list):
+    events_menu = types.InlineKeyboardMarkup(row_width=1)
+    for event in events:
+        button = types.InlineKeyboardButton(text=f"{event.name}", callback_data=f"{event.event_id}"+"_event")
+        events_menu.add(button, row_width=1)
+    return events_menu
+
+
 @bot.callback_query_handler(func=lambda call: call.data == 'enroll')
-def enroll_user(call: types.CallbackQuery):
-    pass
+def show_events(call: types.CallbackQuery):
+    events = db_manager.fetch_events()
+    user_id = call.from_user.id
+    bot.answer_callback_query(callback_query_id=call.id, text="available events")
+    bot.send_message(chat_id=user_id, text="events:", reply_markup=create_events_list(events=events))
+
+
+@bot.message_handler(func=lambda call: str(call.data).find(__sub='_event') > -1)
+def show_chosen_event(call: types.CallbackQuery):
+    bot.answer_callback_query(callback_query_id=call.id, text=call.data)
 
 
 @bot.message_handler(commands=['start'])

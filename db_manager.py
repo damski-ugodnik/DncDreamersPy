@@ -3,7 +3,7 @@ from datetime import date
 import asyncio
 
 
-async def fetch_events():
+def fetch_events():
     db_object.execute(f"SELECT * FROM events")
     result = db_object.fetchall()
     events = list()
@@ -16,11 +16,10 @@ async def fetch_events():
                       price=int(event_row[5].strip()),
                       additional=event_row[6].strip())
         events.append(__object=event)
-        await asyncio.sleep(0)
     return events
 
 
-async def fetch_enrollments(user_id:int):
+def fetch_enrollments(user_id: int):
     db_object.execute(f"SELECT * FROM enrollments WHERE user_id = {user_id}")
     result = db_object.fetchall()
     enrollments = list()
@@ -40,9 +39,8 @@ async def fetch_enrollments(user_id:int):
                                 paid=enrollment_row[12]
                                 )
         enrollments.append(__object=enrollment)
-        await asyncio.sleep(0)
+        asyncio.sleep(0)
     return enrollments
-
 
 
 class Enrollment:
@@ -60,11 +58,13 @@ class Enrollment:
     __allows_info_processing: bool
     __paid: bool
 
-    def __init__(self, event_id:int, user_id:int, first_name:str, last_name:str,town:str, participant_type: str, club: str, coach: str, age_category: str, date_of_birth: date, phone_number:str, allows_info_processing:bool, paid: bool):
+    def __init__(self, event_id: int, user_id: int, first_name: str, last_name: str, town: str, participant_type: str,
+                 club: str, coach: str, age_category: str, date_of_birth: date, phone_number: str,
+                 allows_info_processing: bool, paid: bool):
         self.__event_id = event_id
         self.__user_id = user_id
         self.__first_name = first_name
-        self.__last_name =last_name
+        self.__last_name = last_name
         self.__town = town
         self.__participant_type = participant_type
         self.__club = club
