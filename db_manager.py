@@ -24,8 +24,8 @@ def fetch_enrollments(user_id: int):
     result = db_object.fetchall()
     enrollments = list()
     for enrollment_row in result:
-        enrollment = Enrollment(event_id=enrollment_row[0].strip(),
-                                user_id=enrollment_row[1].strip(),
+        enrollment = Enrollment(event_id=enrollment_row[0],
+                                user_id=enrollment_row[1],
                                 first_name=enrollment_row[2].strip(),
                                 last_name=enrollment_row[3].strip(),
                                 town=enrollment_row[4].strip(),
