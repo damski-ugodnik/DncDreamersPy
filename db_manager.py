@@ -13,7 +13,7 @@ def fetch_events():
                       date_of_issue=event_row[2],
                       town=event_row[3].strip(),
                       place=event_row[4].strip(),
-                      price=int(event_row[5].strip()),
+                      price=int(event_row[5]),
                       additional=event_row[6].strip())
         events.append(__object=event)
     return events
