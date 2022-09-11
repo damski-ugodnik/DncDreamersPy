@@ -13,7 +13,7 @@ def init_enrollment(event_id: int, user_id: int):
 
 def set_type(user_id: int, participant: str):
     db_object.execute(
-        f"UPDATE enrollments SET participant_type = {participant} WHERE user_id = {user_id} AND filled = FALSE")
+        f"UPDATE enrollments SET participant_type = {str(participant)} WHERE user_id = {user_id} AND filled = FALSE")
     db_connection.commit()
 
 
