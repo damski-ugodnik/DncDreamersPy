@@ -3,13 +3,19 @@ from datetime import date
 
 
 def init_enrollment(event_id: int, user_id: int):
+    db_object.execute(f"SELECT enrollment_id FROM enrollments WHERE filled = FALSE AND event_id = {event_id} AND user_id = {user_id}")
+    res = db_object.fetchone()
+    if not not res:
+        db_object.execute(f"DELETE FROM enrollments WHERE enrollment_id = {res[0]}")
     db_object.execute(f"INSERT INTO enrollments(event_id, user_id, filled) VALUES({event_id},{user_id}, {False})")
     db_connection.commit()
 
 
 def set_type(user_id: int, participant: str):
-    db_object.execute(f"UPDATE enrollments SET participant_type = {participant_type} WHERE user_id = {user_id} AND filled = FALSE")
+    db_object.execute(
+        f"UPDATE enrollments SET participant_type = {participant} WHERE user_id = {user_id} AND filled = FALSE")
     db_connection.commit()
+
 
 def fetch_event(event_id: int):
     db_object.execute(f"SELECT * FROM events WHERE id = {event_id}")
