@@ -97,15 +97,16 @@ def enroll_event(call: types.CallbackQuery):
 
 @bot.message_handler(func=lambda message: whether_participant_type(message=message))
 def set_participant_type(message: types.Message):
-    db_manager.set_type(message.from_user.id, message.text)
-    if message.text == locale_manager.participant(get_lang_from_db(message.from_user.id))["couple"]:
-        bot.send_message(message.from_user.id,
-                         "Insert your name and surname and the name of your partner (You/Partner):")
-    else:
-        bot.send_message(message.from_user.id, "Insert your name and surname:")
-    operation = "setname"
-    db_object.execute(f"UPDATE users SET current_operation = {operation} WHERE telegram_id = {message.from_user.id}")
-    db_connection.commit()
+    if whether_participant_type(message):
+        db_manager.set_type(message.from_user.id, message.text)
+        if message.text == locale_manager.participant(get_lang_from_db(message.from_user.id))["couple"]:
+            bot.send_message(message.from_user.id,
+                             "Insert your name and surname and the name of your partner (You/Partner):")
+        else:
+            bot.send_message(message.from_user.id, "Insert your name and surname:")
+        operation = "setname"
+        db_object.execute(f"UPDATE users SET current_operation = {operation} WHERE telegram_id = {message.from_user.id}")
+        db_connection.commit()
 
 
 def whether_participant_type(message: types.Message):
