@@ -2,6 +2,15 @@ from main import db_object, db_connection
 from datetime import date
 
 
+def init_enrollment(event_id: int, user_id: int):
+    db_object.execute(f"INSERT INTO enrollments(event_id, user_id, filled) VALUES({event_id},{user_id}, {False})")
+    db_connection.commit()
+
+
+def set_type(user_id: int, participant_type: str):
+    db_object.execute(f"UPDATE enrollments SET participant_type = {participant_type} WHERE user_id = {user_id} AND filled = FALSE")
+    db_connection.commit()
+
 def fetch_event(event_id: int):
     db_object.execute(f"SELECT * FROM events WHERE id = {event_id}")
 

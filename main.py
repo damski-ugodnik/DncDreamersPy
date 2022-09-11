@@ -67,7 +67,7 @@ def show_chosen_event(call: types.CallbackQuery):
 
         def gen_markup_for_event_msg():
             markup = types.InlineKeyboardMarkup(row_width=2)
-            markup.add(types.InlineKeyboardButton('Enroll', callback_data='enroll'),
+            markup.add(types.InlineKeyboardButton('Enroll', callback_data=f'{event_id}_enroll'),
                        types.InlineKeyboardButton('Back', callback_data='show_events'))
             return markup
 
@@ -83,6 +83,35 @@ def show_chosen_event(call: types.CallbackQuery):
         bot.send_message(user_id, configure_text(), reply_markup=gen_markup_for_event_msg())
 
     configure_event_msg()
+
+
+@bot.message_handler(func=lambda call: call.data.find("_enroll"))
+def enroll_event(call: types.CallbackQuery):
+    event_id = int(call.data[:call.data.find("_enroll")])
+    db_manager.init_enrollment(event_id=event_id, user_id=call.from_user.id)
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    buttons = ["couple", "solo", "coach"]
+    markup.add(*buttons)
+    bot.send_message(call.from_user.id, "are you:", reply_markup=markup)
+
+
+@bot.message_handler(func=lambda message: whether_participant_type(message=message))
+def set_participant_type(message: types.Message):
+    db_manager.set_type(message.from_user.id, message.text)
+    if message.text == locale_manager.participant(get_lang_from_db(message.from_user.id))["couple"]:
+        bot.send_message(message.from_user.id,
+                         "Insert your name and surname and the name of your partner (You/Partner):")
+    else:
+        bot.send_message(message.from_user.id, "Insert your name and surname:")
+    operation = "setname"
+    db_object.execute(f"UPDATE users SET current_operation = {operation} WHERE telegram_id = {message.from_user.id}")
+    db_connection.commit()
+
+
+def whether_participant_type(message: types.Message):
+    lang = get_lang_from_db(message.from_user.id)
+    typ = locale_manager.participant(lang=lang)
+    return message.text == typ["couple"] or message.text == typ["solo"] or message.text == typ["coach"]
 
 
 @bot.message_handler(commands=['start'])

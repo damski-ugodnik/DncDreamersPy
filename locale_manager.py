@@ -1,4 +1,3 @@
-
 def greeting(lang: str):
     if lang == 'English':
         return 'Hello, this bot is created to make event enrollments easier and faster'
@@ -15,11 +14,28 @@ def lang_choice(lang: str):
 
 def main_menu(lang: str):
     match lang:
-        case 'English': return 'Main menu'
-        case 'Українська': return 'Головне меню'
+        case 'English':
+            return 'Main menu'
+        case 'Українська':
+            return 'Головне меню'
 
 
 def menu_buttons(lang: str):
     match lang:
-        case 'English': return ['Enroll', 'Your enrollments']
-        case 'Українська': return ['Записатися', 'Ваші записи']
+        case 'English':
+            return ['Enroll', 'Your enrollments']
+        case 'Українська':
+            return ['Записатися', 'Ваші записи']
+
+
+def participant(lang: str):
+    eng_dict = {
+        "couple": "Couple",
+        "solo": "Solo",
+        "coach": "Coach"
+    }
+    ukr_dict = {
+        "couple": "Пара",
+        "solo": "Соло",
+        "coach": "Тренер"
+    }
