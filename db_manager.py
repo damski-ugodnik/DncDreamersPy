@@ -11,7 +11,7 @@ def init_enrollment(event_id: int, user_id: int):
     db_connection.commit()
 
 
-def set_type(user_id: int, participant: str):
+def set_type(user_id: int, participant):
     db_object.execute(
         f"UPDATE enrollments SET participant_type = {participant} WHERE user_id = {user_id} AND filled = FALSE")
     db_connection.commit()
