@@ -105,8 +105,7 @@ def set_participant_type(message: types.Message):
                              "Insert your name and surname and the name of your partner (You/Partner):")
         else:
             bot.send_message(message.from_user.id, "Insert your name and surname:")
-        operation = 'setname'
-        db_object.execute(f"UPDATE users SET current_operation = {operation} WHERE telegram_id = {message.from_user.id}")
+        db_object.execute(f"UPDATE users SET current_operation = %s WHERE telegram_id = {message.from_user.id}", ('set_name', ))
         db_connection.commit()
 
 
