@@ -30,15 +30,15 @@ def menu_buttons(lang: str):
 
 def participant(lang: str):
     eng_dict = {
-        "couple": "Couple",
-        "solo": "Solo",
-        "coach": "Coach"
+        'couple': 'Couple',
+        'solo': 'Solo',
+        'coach': 'Coach'
     }
     ukr_dict = {
-        "couple": "Пара",
-        "solo": "Соло",
-        "coach": "Тренер"
+        'couple': 'Пара',
+        'solo': 'Соло',
+        'coach': 'Тренер'
     }
     match lang:
-        case "English": return eng_dict
-        case "Українська": return ukr_dict
+        case 'English': return eng_dict
+        case 'Українська': return ukr_dict
