@@ -90,7 +90,8 @@ def enroll_event(call: types.CallbackQuery):
     event_id = int(call.data[:call.data.find("_enroll")])
     db_manager.init_enrollment(event_id=event_id, user_id=call.from_user.id)
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    buttons = ["couple", "solo", "coach"]
+    text = locale_manager.participant(get_lang_from_db(call.from_user.id))
+    buttons = [text["couple"], text["solo"], text["coach"]]
     markup.add(*buttons)
     bot.send_message(call.from_user.id, "are you:", reply_markup=markup)
 
