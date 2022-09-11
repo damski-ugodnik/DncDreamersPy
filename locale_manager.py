@@ -39,3 +39,6 @@ def participant(lang: str):
         "solo": "Соло",
         "coach": "Тренер"
     }
+    match lang:
+        case "English": return eng_dict
+        case "Українська": return ukr_dict
