@@ -4,7 +4,7 @@ from datetime import date
 
 def init_enrollment(event_id: int, user_id: int):
     db_object.execute(f"SELECT enrollment_id FROM enrollments WHERE filled = FALSE AND user_id = {user_id}")
-    res = db_object.fetchone()
+    res = db_object.fetchall()
     if not not res:
         for i in res:
             db_object.execute(f"DELETE FROM enrollments WHERE enrollment_id = {i[0]}")
