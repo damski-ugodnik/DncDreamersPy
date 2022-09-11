@@ -19,7 +19,7 @@ db_object = db_connection.cursor()
 
 def get_lang_from_db(user_id: int):
     db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
-    lang = f"{db_object.fetchone()[0].strip()}"
+    lang = db_object.fetchone()[0].strip()
     return lang
 
 
