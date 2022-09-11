@@ -95,7 +95,7 @@ def enroll_event(call: types.CallbackQuery):
     bot.send_message(call.from_user.id, "are you:", reply_markup=markup)
 
 
-@bot.message_handler(func=lambda message: whether_participant_type(message=message)==True)
+@bot.message_handler(func=lambda message: whether_participant_type(message=message))
 def set_participant_type(message: types.Message):
     db_manager.set_type(message.from_user.id, message.text)
     if message.text == locale_manager.participant(get_lang_from_db(message.from_user.id))["couple"]:
@@ -111,7 +111,7 @@ def set_participant_type(message: types.Message):
 def whether_participant_type(message: types.Message):
     lang = get_lang_from_db(message.from_user.id)
     typ = locale_manager.participant(lang=lang)
-    return message.text == typ["couple"] or message.text == typ["solo"] or message.text == typ["coach"]
+    return message.text == str(typ["couple"]) or str(message.text == typ["solo"]) or str(message.text == typ["coach"])
 
 
 @bot.message_handler(commands=['start'])
