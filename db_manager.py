@@ -3,10 +3,11 @@ from datetime import date
 
 
 def init_enrollment(event_id: int, user_id: int):
-    db_object.execute(f"SELECT enrollment_id FROM enrollments WHERE filled = FALSE AND event_id = {event_id} AND user_id = {user_id}")
+    db_object.execute(f"SELECT enrollment_id FROM enrollments WHERE filled = FALSE AND user_id = {user_id}")
     res = db_object.fetchone()
     if not not res:
-        db_object.execute(f"DELETE FROM enrollments WHERE enrollment_id = {res[0]}")
+        for i in res:
+            db_object.execute(f"DELETE FROM enrollments WHERE enrollment_id = {i[0]}")
     db_object.execute(f"INSERT INTO enrollments(event_id, user_id, filled) VALUES({event_id},{user_id}, {False})")
     db_connection.commit()
 
