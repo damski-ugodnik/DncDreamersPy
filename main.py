@@ -112,7 +112,7 @@ def set_participant_type(message: types.Message):
 def whether_participant_type(message: types.Message):
     lang = get_lang_from_db(message.from_user.id)
     typ = locale_manager.participant(lang=lang)
-    return message.text == str(typ["couple"]) or str(message.text == typ["solo"]) or str(message.text == typ["coach"])
+    return message.text == str(typ["couple"]) or message.text == str(typ["solo"]) or message.text == str(typ["coach"])
 
 
 @bot.message_handler(commands=['start'])
