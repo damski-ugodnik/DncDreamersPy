@@ -100,13 +100,12 @@ def enroll_event(call: types.CallbackQuery):
 def set_participant_type(message: types.Message):
     if whether_participant_type(message):
         db_manager.set_type(message.from_user.id, message.text)
+        text: str
         if message.text == locale_manager.participant(get_lang_from_db(message.from_user.id))["couple"]:
-            bot.send_message(message.from_user.id,
-                             "Insert your name and surname and the name of your partner (You/Partner):")
+            text = "Insert your name and surname and the name of your partner (You/Partner):"
         else:
-            bot.send_message(message.from_user.id, "Insert your name and surname:")
-        db_object.execute(f"UPDATE users SET current_operation = %s WHERE telegram_id = {message.from_user.id}", ('set_name', ))
-        db_connection.commit()
+            text = "Insert your name and surname:"
+        bot.send_message(message.from_user.id, text, reply_markup=types.ReplyKeyboardRemove())
 
 
 def whether_participant_type(message: types.Message):
@@ -115,8 +114,35 @@ def whether_participant_type(message: types.Message):
     return message.text == str(typ["couple"]) or message.text == str(typ["solo"]) or message.text == str(typ["coach"])
 
 
+@bot.message_handler(func=lambda message: determine_operation(message.from_user.id) == 'set_name')
+def set_name(message: types.Message):
+    user_id = message.from_user.id
+    db_manager.set_name(user_id=user_id, name=message.text)
+    bot.send_message(user_id, "Insert your town:")
+
+
+@bot.message_handler(func=lambda message: determine_operation(message.from_user.id) == 'set_town')
+def set_town(message: types.Message):
+    user_id = message.from_user.id
+    db_manager.set_town(user_id=user_id, town=message.text)
+    bot.send_message(user_id, "Insert your club:")
+
+
+@bot.message_handler(func=lambda message: determine_operation(message.from_user.id) == 'set_club')
+def set_club(message: types.Message):
+    user_id = message.from_user.id
+
+
+def determine_operation(user_id: int):
+    db_object.execute(f"SELECT current_operation FROM users WHERE telegram_id = {user_id}")
+    result = db_object.fetchone()
+    return str(result[0])
+
+
+
 @bot.message_handler(commands=['start'])
 def start_msg(message: types.Message):
+    ph = message.contact.phone_number
     user_id = message.from_user.id
     db_object.execute(f"SELECT telegram_id FROM users WHERE telegram_id= %s", (user_id,))
     result = db_object.fetchone()

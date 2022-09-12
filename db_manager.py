@@ -1,5 +1,7 @@
+import main
 from main import db_object, db_connection
 from datetime import date
+import locale_manager
 
 
 def init_enrollment(event_id: int, user_id: int):
@@ -12,9 +14,59 @@ def init_enrollment(event_id: int, user_id: int):
     db_connection.commit()
 
 
-def set_type(user_id: int, participant):
-    db_object.execute(
-        f"UPDATE enrollments SET participant_type = %s WHERE user_id = {user_id} AND filled = FALSE", (participant,))
+def set_type(user_id: int, participant: str):
+    set_str_param_and_operation(user_id=user_id, param_name='participant_type', param_value=participant,
+                                operation_name='set_name')
+
+
+def set_name(user_id: int, name: str):
+    set_str_param_and_operation(user_id=user_id, param_name='participant_name', param_value=name,
+                                operation_name='set_town')
+
+
+def set_town(user_id: int, town: str):
+    set_str_param_and_operation(user_id=user_id, param_name='town', param_value=town,
+                                operation_name='set_club')
+
+
+def set_club(user_id: int, club: str):
+    db_object.execute(f"SELECT participant_type FROM enrollments WHERE user_id = {user_id} AND filled = FALSE")
+    p_type = db_object.fetchone()[0]
+    eg = locale_manager.participant(main.get_lang_from_db(user_id=user_id))["coach"]
+    operation: str
+    if p_type == eg:
+        operation = 'set_phone_number'
+    else:
+        operation = 'set_coach'
+    set_str_param_and_operation(user_id=user_id, param_name='club', param_value=club,
+                                operation_name=operation)
+
+
+def set_coach(user_id: int, coach: str):
+    set_str_param_and_operation(user_id=user_id, param_name='coach', param_value=coach,
+                                operation_name='set_age_category')
+
+
+def set_age_category(user_id: int, age_category: str):
+    set_str_param_and_operation(
+        user_id=user_id, param_name='age_category', param_value=age_category, operation_name='set_date_of_birth'
+    )
+
+
+def set_date_of_birth(user_id: int, date_of_birth: str):
+    set_str_param_and_operation(user_id=user_id, param_name='date_of_birth', param_value=date_of_birth,
+                                operation_name='set_phone_number')
+
+
+def set_phone_number(user_id: int, phone_number: str):
+    pass
+
+
+def set_str_param_and_operation(user_id: int, param_name: str, param_value: str, operation_name: str):
+    db_object.execute(f"UPDATE enrollments SET {param_name} = %s WHERE user_id = {user_id} AND filled = FALSE",
+                      (param_value,))
+    db_connection.commit()
+    db_object.execute(f"UPDATE users SET current_operation = %s WHERE telegram_id = {user_id}", (operation_name,))
     db_connection.commit()
 
 
