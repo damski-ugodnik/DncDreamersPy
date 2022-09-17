@@ -114,7 +114,7 @@ def whether_participant_type(message: types.Message):
     return message.text == str(typ["couple"]) or message.text == str(typ["solo"]) or message.text == str(typ["coach"])
 
 
-@bot.message_handler(func=lambda message: determine_operation(message.from_user.id) == "set_name")
+@bot.message_handler(func=lambda message: (determine_operation(message.from_user.id) == "set_name"))
 def set_name(message: types.Message):
     user_id = message.from_user.id
     db_manager.set_name(user_id=user_id, name=message.text)
