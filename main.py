@@ -149,8 +149,8 @@ def determine_operation(user_id: int, operation_name: str):
     db_object.execute(f"SELECT current_operation FROM users WHERE telegram_id = {user_id}")
     result = db_object.fetchone()
     res = str(result[0]) == operation_name
+    bot.send_message(user_id,res)
     return res
-
 
 
 @bot.message_handler(commands=['start'])
