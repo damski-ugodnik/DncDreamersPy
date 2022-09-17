@@ -72,7 +72,7 @@ def set_str_param_and_operation(user_id: int, param_name: str, param_value: str,
     db_object.execute(f"UPDATE enrollments SET {param_name.strip()} = %s WHERE user_id = {user_id} AND filled = FALSE",
                       (param_value,))
     db_connection.commit()
-    db_object.execute(f"UPDATE users SET current_operation = %s WHERE telegram_id = {user_id}", (operation_name,))
+    db_object.execute(f"UPDATE users SET current_operation = %s WHERE telegram_id = {user_id}", (operation_name.strip(),))
     db_connection.commit()
 
 
