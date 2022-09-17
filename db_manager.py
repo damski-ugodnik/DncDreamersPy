@@ -69,7 +69,7 @@ def set_info_processing(user_id: int, allows: bool):
 
 
 def set_str_param_and_operation(user_id: int, param_name: str, param_value: str, operation_name: str):
-    db_object.execute(f"UPDATE enrollments SET {param_name} = %s WHERE user_id = {user_id} AND filled = FALSE",
+    db_object.execute(f"UPDATE enrollments SET {param_name.strip()} = %s WHERE user_id = {user_id} AND filled = FALSE",
                       (param_value,))
     db_connection.commit()
     db_object.execute(f"UPDATE users SET current_operation = %s WHERE telegram_id = {user_id}", (operation_name,))
