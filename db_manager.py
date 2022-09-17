@@ -59,7 +59,13 @@ def set_date_of_birth(user_id: int, date_of_birth: str):
 
 
 def set_phone_number(user_id: int, phone_number: str):
-    pass
+    set_str_param_and_operation(user_id=user_id, param_name='phone_number', param_value=phone_number,
+                                operation_name='set_info_processing')
+
+
+def set_info_processing(user_id: int, allows: bool):
+    set_str_param_and_operation(user_id=user_id, param_name='allows_info_processing', param_value=allows,
+                                operation_name='')
 
 
 def set_str_param_and_operation(user_id: int, param_name: str, param_value: str, operation_name: str):
