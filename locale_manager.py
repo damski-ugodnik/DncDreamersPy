@@ -40,5 +40,23 @@ def participant(lang: str):
         'coach': 'Тренер'
     }
     match lang:
-        case 'English': return eng_dict
-        case 'Українська': return ukr_dict
+        case 'English':
+            return eng_dict
+        case 'Українська':
+            return ukr_dict
+
+
+def insert_your_name_single(lang: str):
+    match lang:
+        case 'English':
+            return 'Insert your name and surname:'
+        case 'Українська':
+            return 'Введіть ваше прізвище та ім\'я'
+
+
+def insert_your_name_couple(lang: str):
+    match lang:
+        case 'English':
+            return 'Insert name and surname of you and your partner'
+        case 'Українська':
+            return 'Введіть ваше прізвище та ім\'я та П.І. партнера'

@@ -1,3 +1,4 @@
+import datetime
 import os
 import telebot
 from telebot import types
@@ -96,22 +97,17 @@ def enroll_event(call: types.CallbackQuery):
     bot.send_message(call.from_user.id, "are you:", reply_markup=markup)
 
 
-@bot.message_handler(func=lambda message: whether_participant_type(message=message))
+@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_type'))
 def set_participant_type(message: types.Message):
-    if whether_participant_type(message):
-        db_manager.set_type(message.from_user.id, message.text)
-        text: str
-        if message.text == locale_manager.participant(get_lang_from_db(message.from_user.id))["couple"]:
-            text = "Insert your name and surname and the name of your partner (You/Partner):"
-        else:
-            text = "Insert your name and surname:"
-        bot.send_message(message.from_user.id, text, reply_markup=types.ReplyKeyboardRemove())
-
-
-def whether_participant_type(message: types.Message):
-    lang = get_lang_from_db(message.from_user.id)
-    typ = locale_manager.participant(lang=lang)
-    return message.text == str(typ["couple"]) or message.text == str(typ["solo"]) or message.text == str(typ["coach"])
+    user_id = message.from_user.id
+    lang = get_lang_from_db(user_id)
+    db_manager.set_type(user_id, message.text)
+    text: str
+    if message.text == locale_manager.participant(lang)["couple"]:
+        text = locale_manager.insert_your_name_couple(lang)
+    else:
+        text = locale_manager.insert_your_name_single(lang)
+    bot.send_message(message.from_user.id, text, reply_markup=types.ReplyKeyboardRemove())
 
 
 @bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_name'))
@@ -131,11 +127,11 @@ def set_town(message: types.Message):
 @bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_club'))
 def set_club(message: types.Message):
     user_id = message.from_user.id
-    db_manager.set_club(user_id,message.text)
+    db_manager.set_club(user_id, message.text)
     bot.send_message(user_id, "Insert your coach: ")
 
 
-@bot.message_handler(func= lambda message: determine_operation(message.from_user.id, 'set_coach'))
+@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_coach'))
 def set_coach(message: types.Message):
     user_id = message.from_user.id
     db_manager.set_coach(user_id, message.text)
@@ -145,11 +141,53 @@ def set_coach(message: types.Message):
     bot.send_message(user_id, "Insert your age category", reply_markup=markup)
 
 
+@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_age_category'))
+def set_age_category(message: types.Message):
+    user_id = message.from_user.id
+    db_manager.set_age_category(user_id, message.text)
+    bot.send_message(user_id, "Insert your date of birth", reply_markup=types.ReplyKeyboardRemove())
+
+
+@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_date_of_birth'))
+def set_date_of_birth(message: types.Message):
+    user_id = message.from_user.id
+    date_of_birth: datetime.date
+    while True:
+        try:
+            date = datetime.datetime.strptime(message.text, "%Y-%m-%d")
+            break
+        except ValueError:
+            continue
+
+    db_manager.set_date_of_birth(user_id, message.text)
+    phone_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button = types.KeyboardButton("Phone number", request_contact=True)
+    phone_markup.add(button)
+    bot.send_message(user_id, "Insert your phone number", reply_markup=phone_markup)
+
+
+@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_phone_number'))
+def set_phone_number(message: types.Message):
+    user_id = message.from_user.id
+    db_manager.set_phone_number(user_id, message.text)
+    markup = types.InlineKeyboardMarkup(row_width=2)
+    button_yes = types.InlineKeyboardButton('Yes', callback_data='True')
+    button_no = types.InlineKeyboardButton('No', callback_data='False')
+    markup.add([button_yes, button_no])
+    bot.send_message(user_id, "Do you accept info?", reply_markup=markup)
+
+
+@bot.callback_query_handler(func=lambda call: determine_operation(call.from_user.id, 'set_info_processing'))
+def set_info_processing(call: types.CallbackQuery):
+    user_id = call.from_user.id
+    db_manager.set_info_processing(user_id, bool(call.data))
+    bot.send_message(user_id, 'Thank you for enrollment!')
+
+
 def determine_operation(user_id: int, operation_name: str):
     db_object.execute(f"SELECT current_operation FROM users WHERE telegram_id = {user_id}")
     result = db_object.fetchone()
     res = str(result[0]).strip().__eq__(operation_name.strip())
-    bot.send_message(user_id, res)
     return res
 
 
