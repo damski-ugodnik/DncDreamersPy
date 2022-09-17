@@ -86,7 +86,7 @@ def show_chosen_event(call: types.CallbackQuery):
     configure_event_msg()
 
 
-@bot.callback_query_handler(func=lambda call: call.data.find("_enroll"))
+@bot.callback_query_handler(func=lambda call: call.data.find("_enroll") >= 0)
 def enroll_event(call: types.CallbackQuery):
     event_id = int(call.data[:call.data.find("_enroll")])
     db_manager.init_enrollment(event_id=event_id, user_id=call.from_user.id)
