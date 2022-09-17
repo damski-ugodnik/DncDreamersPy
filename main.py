@@ -166,7 +166,8 @@ def set_date_of_birth(message: types.Message):
     bot.send_message(user_id, "Insert your phone number", reply_markup=phone_markup)
 
 
-@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_phone_number'))
+@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_phone_number'),
+                     content_types=['contact'])
 def set_phone_number(message: types.Message):
     user_id = message.from_user.id
     db_manager.set_phone_number(user_id, message.contact.phone_number)
