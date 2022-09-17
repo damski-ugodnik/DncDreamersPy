@@ -174,14 +174,15 @@ def set_phone_number(message: types.Message):
     markup = types.InlineKeyboardMarkup(row_width=2)
     button_yes = types.InlineKeyboardButton('Yes', callback_data='True')
     button_no = types.InlineKeyboardButton('No', callback_data='False')
-    markup.add(button_yes,button_no)
+    markup.add(button_yes, button_no)
     bot.send_message(user_id, "Do you accept info?", reply_markup=markup)
 
 
 @bot.callback_query_handler(func=lambda call: determine_operation(call.from_user.id, 'set_info_processing'))
 def set_info_processing(call: types.CallbackQuery):
     user_id = call.from_user.id
-    db_manager.set_info_processing(user_id, bool(call.data))
+
+    db_manager.set_info_processing(user_id, call.data.__eq__('True'))
     bot.send_message(user_id, 'Thank you for enrollment!')
 
 
