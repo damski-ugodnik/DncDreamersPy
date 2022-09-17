@@ -174,7 +174,7 @@ def set_phone_number(message: types.Message):
     markup = types.InlineKeyboardMarkup(row_width=2)
     button_yes = types.InlineKeyboardButton('Yes', callback_data='True')
     button_no = types.InlineKeyboardButton('No', callback_data='False')
-    markup.add([button_yes, button_no])
+    markup.add(button_yes,button_no)
     bot.send_message(user_id, "Do you accept info?", reply_markup=markup)
 
 
