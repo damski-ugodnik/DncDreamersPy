@@ -117,7 +117,9 @@ def whether_participant_type(message: types.Message):
 @bot.message_handler(func=lambda message: determine_operation(message.from_user.id) == 'set_name')
 def set_name(message: types.Message):
     user_id = message.from_user.id
-    #db_manager.set_name(user_id=user_id, name=message.text)
+
+    db_manager.set_name(user_id=user_id, name=message.text)
+    bot.answer_callback_query(user_id, "setting name")
     bot.send_message(user_id, "Insert your town:")
 
 
