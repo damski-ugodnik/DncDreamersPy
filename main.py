@@ -114,14 +114,14 @@ def whether_participant_type(message: types.Message):
     return message.text == str(typ["couple"]) or message.text == str(typ["solo"]) or message.text == str(typ["coach"])
 
 
-@bot.message_handler(func=lambda message: (determine_operation(message.from_user.id) == "set_name"))
+@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_name'))
 def set_name(message: types.Message):
     user_id = message.from_user.id
     db_manager.set_name(user_id=user_id, name=message.text)
     bot.send_message(user_id, "Insert your town:")
 
 
-@bot.message_handler(func=lambda message: determine_operation(message.from_user.id) == 'set_town')
+@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_town'))
 def set_town(message: types.Message):
     user_id = message.from_user.id
     db_manager.set_town(user_id=user_id, town=message.text)
@@ -145,11 +145,11 @@ def set_coach(message: types.Message):
     bot.send_message(user_id, "Insert your age category", reply_markup=markup)
 
 
-def determine_operation(user_id: int):
+def determine_operation(user_id: int, operation_name: str):
     db_object.execute(f"SELECT current_operation FROM users WHERE telegram_id = {user_id}")
     result = db_object.fetchone()
-    bot.send_message(user_id, str(result[0]))
-    return str(result[0])
+    res = str(result[0]) == operation_name
+    return res
 
 
 
