@@ -128,14 +128,14 @@ def set_town(message: types.Message):
     bot.send_message(user_id, "Insert your club:")
 
 
-@bot.message_handler(func=lambda message: determine_operation(message.from_user.id) == 'set_club')
+@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_club'))
 def set_club(message: types.Message):
     user_id = message.from_user.id
     db_manager.set_club(user_id,message.text)
     bot.send_message(user_id, "Insert your coach: ")
 
 
-@bot.message_handler(func= lambda message: determine_operation(message.from_user.id) == 'set_coach')
+@bot.message_handler(func= lambda message: determine_operation(message.from_user.id, 'set_coach'))
 def set_coach(message: types.Message):
     user_id = message.from_user.id
     db_manager.set_coach(user_id, message.text)
@@ -149,7 +149,7 @@ def determine_operation(user_id: int, operation_name: str):
     db_object.execute(f"SELECT current_operation FROM users WHERE telegram_id = {user_id}")
     result = db_object.fetchone()
     res = str(result[0]) == operation_name
-    bot.send_message(user_id,res)
+    bot.send_message(user_id, res)
     return res
 
 
