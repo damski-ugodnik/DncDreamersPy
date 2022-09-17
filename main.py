@@ -187,6 +187,7 @@ def set_info_processing(call: types.CallbackQuery):
             break
 
     bot.send_message(user_id, 'Thank you for enrollment!')
+    db_object.execute(f"UPDATE enrollments SET filled = {True} WHERE user_id = {user_id}")
     show_menu(message=call.message)
 
 
