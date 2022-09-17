@@ -169,7 +169,7 @@ def set_date_of_birth(message: types.Message):
 @bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_phone_number'))
 def set_phone_number(message: types.Message):
     user_id = message.from_user.id
-    db_manager.set_phone_number(user_id, message.text)
+    db_manager.set_phone_number(user_id, message.contact.phone_number)
     markup = types.InlineKeyboardMarkup(row_width=2)
     button_yes = types.InlineKeyboardButton('Yes', callback_data='True')
     button_no = types.InlineKeyboardButton('No', callback_data='False')
