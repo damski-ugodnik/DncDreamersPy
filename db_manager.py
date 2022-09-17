@@ -20,6 +20,7 @@ def set_type(user_id: int, participant: str):
 
 
 def set_name(user_id: int, name: str):
+    main.logger.debug("setting name")
     set_str_param_and_operation(user_id=user_id, param_name='participant_name', param_value=name,
                                 operation_name='set_town')
 
