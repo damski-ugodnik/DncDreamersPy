@@ -181,9 +181,13 @@ def set_phone_number(message: types.Message):
 @bot.callback_query_handler(func=lambda call: determine_operation(call.from_user.id, 'set_info_processing'))
 def set_info_processing(call: types.CallbackQuery):
     user_id = call.from_user.id
+    while True:
+        if call.data.__eq__('True'):
+            db_manager.set_info_processing(user_id, True)
+            break
 
-    db_manager.set_info_processing(user_id, call.data.__eq__('True'))
     bot.send_message(user_id, 'Thank you for enrollment!')
+    show_menu(message=call.message)
 
 
 def determine_operation(user_id: int, operation_name: str):
