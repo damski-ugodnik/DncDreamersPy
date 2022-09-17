@@ -146,9 +146,9 @@ def set_coach(message: types.Message):
 
 
 def determine_operation(user_id: int):
-    bot.send_message(user_id, "rbtbrg")
     db_object.execute(f"SELECT current_operation FROM users WHERE telegram_id = {user_id}")
     result = db_object.fetchone()
+    bot.send_message(user_id, str(result[0]))
     return str(result[0])
 
 
