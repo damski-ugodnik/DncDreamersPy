@@ -65,8 +65,8 @@ def set_phone_number(user_id: int, phone_number: str):
 
 
 def set_info_processing(user_id: int, allows: bool):
-    set_str_param_and_operation(user_id=user_id, param_name='allows_info_processing', param_value=allows,
-                                operation_name='')
+    set_str_param_and_operation(user_id=user_id, param_name='allows_info_processing', param_value=str(allows),
+                                operation_name=str(None))
 
 
 def set_str_param_and_operation(user_id: int, param_name: str, param_value: str, operation_name: str):
