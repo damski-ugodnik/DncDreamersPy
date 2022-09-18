@@ -188,7 +188,7 @@ def set_date_of_birth(message: types.Message):
 
 
 @bot.message_handler(
-    func=lambda message: determine_operation(message.from_user.id, 'set_phone_number') and not_command(message.text),
+    func=lambda message: determine_operation(message.from_user.id, 'set_phone_number'),
     content_types=['contact'])
 def set_phone_number(message: types.Message):
     user_id = message.from_user.id
