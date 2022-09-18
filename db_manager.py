@@ -1,5 +1,5 @@
 import main
-from main import db_object, db_connection
+from main import db_object, db_connection, bot, types
 from datetime import date
 import locale_manager
 
@@ -39,8 +39,13 @@ def set_club(user_id: int, club: str):
     operation: str
     if str(p_type).strip().__eq__(eg):
         operation = 'set_phone_number'
+        phone_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        button = types.KeyboardButton("Phone number", request_contact=True)
+        phone_markup.add(button)
+        bot.send_message(user_id, "Insert your phone number", reply_markup=phone_markup)
     else:
         operation = 'set_coach'
+        bot.send_message(user_id, "Insert your coach: ")
     set_str_param_and_operation(user_id=user_id, param_name='club', param_value=club,
                                 operation_name=operation)
 

@@ -137,7 +137,6 @@ def set_town(message: types.Message):
 def set_club(message: types.Message):
     user_id = message.from_user.id
     db_manager.set_club(user_id, message.text)
-    bot.send_message(user_id, "Insert your coach: ")
 
 
 @bot.message_handler(
