@@ -147,7 +147,8 @@ def set_coach(message: types.Message):
     lang = get_lang_from_db(user_id)
     buttons = locale_manager.age_categories(lang)
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add(*buttons)
+    markup.add(*buttons[0])
+    markup.add(*buttons[1])
     bot.send_message(user_id, "Insert your age category", reply_markup=markup)
 
 
@@ -163,9 +164,7 @@ def set_age_category(message: types.Message):
                 db_manager.set_age_category(user_id, message.text)
                 bot.send_message(user_id, "Insert your date of birth", reply_markup=types.ReplyKeyboardRemove())
                 return
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add(*categories)
-    bot.send_message(user_id, "Insert your age category", reply_markup=markup)
+    bot.send_message(user_id, "Insert your age category")
 
 
 @bot.message_handler(
