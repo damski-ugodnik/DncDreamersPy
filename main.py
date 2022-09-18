@@ -203,9 +203,10 @@ def set_info_processing(call: types.CallbackQuery):
     if call.data.__eq__('True'):
         db_manager.set_info_processing(user_id, True)
     else:
-        bot.send_message(user_id, locale_manager.enrollment_not_accepted(lang), reply_markup=gen_main_menu(lang))
+        bot.send_message(user_id, locale_manager.enrollment_not_accepted(lang), reply_markup=types.ReplyKeyboardRemove())
 
-    bot.send_message(user_id, locale_manager.enrollment_thanks(lang), reply_markup=gen_main_menu(lang))
+    bot.send_message(user_id, locale_manager.enrollment_thanks(lang), reply_markup=types.ReplyKeyboardRemove())
+    show_menu(call.message)
     db_object.execute(f"UPDATE enrollments SET filled = {True} WHERE user_id = {user_id}")
     db_connection.commit()
 
