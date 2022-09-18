@@ -69,3 +69,101 @@ def age_categories(lang: str):
         case 'Українська':
             return [['До 10 років', 'До 12 років', 'До 14 років', 'До 16 років'],
                     ['До 19 років', 'До 21 року', 'Більше 21 року']]
+
+
+def insert_town(lang: str):
+    match lang:
+        case 'English':
+            return 'Insert your town:'
+        case 'Українська':
+            return 'Введіть ваше місто:'
+
+
+def insert_club(lang: str):
+    match lang:
+        case 'English':
+            return 'Insert your club'
+        case 'Українська':
+            return 'Введіть назву вашого клубу'
+
+
+def insert_coach(lang: str):
+    match lang:
+        case 'English':
+            return 'Insert your coach name'
+        case 'Українська':
+            return 'Введіть ім\'я вашого тренера'
+
+
+def insert_phone_number(lang: str):
+    match lang:
+        case 'English':
+            return 'Insert your phone number'
+        case 'Українська':
+            return 'Введіть ваш номер телефону'
+
+
+def phone_number(lang: str):
+    match lang:
+        case 'English':
+            return 'Phone number'
+        case 'Українська':
+            return 'Номер телефону'
+
+
+def insert_age_category(lang: str):
+    match lang:
+        case 'English':
+            return 'Insert your age category'
+        case 'Українська':
+            return 'Введіть вашу вікову категорію'
+
+
+def info_processing(lang: str):
+    match lang:
+        case 'English':
+            return 'You consent to the processing of personal data (According to Law No. 34 "On the Protection of Personal Data")\n' \
+                   'Answer (Yes) (if the answer is no, the bot will not accept this enrollment)'
+        case 'Українська':
+            return 'Даєте згоду на обробку особистих даних (Згідно з законом  №34 «Про захист персональних даних»)\n' \
+                   'Відповідь (Так) (якщо відповідь – ні, бот не прийме цей запис)'
+
+
+def yes(lang: str):
+    match lang:
+        case 'English':
+            return 'Yes'
+        case 'Українська':
+            return 'Так'
+
+
+def no(lang: str):
+    match lang:
+        case 'English':
+            return 'No'
+        case 'Українська':
+            return 'Ні'
+
+
+def enrollment_thanks(lang: str):
+    match lang:
+        case 'English':
+            return 'Thank you for enrollment'
+        case 'Українська':
+            return 'Дякуємо за ваш запис'
+
+
+def enrollment_not_accepted(lang: str):
+    match lang:
+        case 'English':
+            return 'Enrollment can not be processed'
+        case 'Українська':
+            return 'Запис не може бути опрацьований'
+
+
+def ask_for_type(lang: str):
+    match lang:
+        case 'English':
+            return 'Insert the type of participant'
+        case 'Українська':
+            return 'Введіть тип учасника'

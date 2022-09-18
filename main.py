@@ -1,14 +1,15 @@
-import datetime
-import os
-import telebot
-from telebot import types
 import logging
-import nice_words_generator
+import os
+
 import psycopg2
+import telebot
 from flask import Flask, request
-from config import *
-import locale_manager
+from telebot import types
+
 import db_manager
+import locale_manager
+import nice_words_generator
+from config import *
 
 bot = telebot.TeleBot(BOT_TOKEN)
 app_server = Flask(__name__)
@@ -67,9 +68,16 @@ def show_chosen_event(call: types.CallbackQuery):
         event = db_manager.fetch_event(event_id=event_id)
 
         def gen_markup_for_event_msg():
+            lang = get_lang_from_db(user_id)
             markup = types.InlineKeyboardMarkup(row_width=2)
-            markup.add(types.InlineKeyboardButton('Enroll', callback_data=f'{event_id}_enroll'),
-                       types.InlineKeyboardButton('Back', callback_data='show_events'))
+            match lang:
+                case 'English':
+                    markup.add(types.InlineKeyboardButton('Enroll', callback_data=f'{event_id}_enroll'),
+                               types.InlineKeyboardButton('Back', callback_data='show_events'))
+                case 'Українська':
+                    markup.add(types.InlineKeyboardButton('Записатися', callback_data=f'{event_id}_enroll'),
+                               types.InlineKeyboardButton('Назад', callback_data='show_events'))
+
             return markup
 
         def configure_text():
@@ -94,12 +102,14 @@ def not_command(text: str):
 def enroll_event(call: types.CallbackQuery):
     if call.data.endswith("_enroll"):
         event_id = int(call.data[:call.data.find("_enroll")])
-        db_manager.init_enrollment(event_id=event_id, user_id=call.from_user.id)
+        user_id = call.from_user.id
+        lang = get_lang_from_db(user_id=user_id)
+        db_manager.init_enrollment(event_id=event_id, user_id=user_id)
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        text = locale_manager.participant(get_lang_from_db(call.from_user.id))
+        text = locale_manager.participant(lang)
         buttons = [text["couple"], text["solo"], text["coach"]]
         markup.add(*buttons)
-        bot.send_message(call.from_user.id, "are you:", reply_markup=markup)
+        bot.send_message(call.from_user.id, locale_manager.ask_for_type(lang=lang), reply_markup=markup)
 
 
 @bot.message_handler(
@@ -120,16 +130,18 @@ def set_participant_type(message: types.Message):
     func=lambda message: determine_operation(message.from_user.id, 'set_name') and not_command(message.text))
 def set_name(message: types.Message):
     user_id = message.from_user.id
+    lang = get_lang_from_db(user_id)
     db_manager.set_name(user_id=user_id, name=message.text)
-    bot.send_message(user_id, "Insert your town:")
+    bot.send_message(user_id, locale_manager.insert_town(lang))
 
 
 @bot.message_handler(
     func=lambda message: determine_operation(message.from_user.id, 'set_town') and not_command(message.text))
 def set_town(message: types.Message):
     user_id = message.from_user.id
+    lang = get_lang_from_db(user_id)
     db_manager.set_town(user_id=user_id, town=message.text)
-    bot.send_message(user_id, "Insert your club:")
+    bot.send_message(user_id, locale_manager.insert_club(lang))
 
 
 @bot.message_handler(
@@ -149,7 +161,7 @@ def set_coach(message: types.Message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(*buttons[0])
     markup.add(*buttons[1])
-    bot.send_message(user_id, "Insert your age category", reply_markup=markup)
+    bot.send_message(user_id, locale_manager.insert_age_category(lang), reply_markup=markup)
 
 
 @bot.message_handler(
@@ -162,28 +174,12 @@ def set_age_category(message: types.Message):
         for category in s:
             if message.text.__eq__(category):
                 db_manager.set_age_category(user_id, message.text)
-                bot.send_message(user_id, "Insert your date of birth", reply_markup=types.ReplyKeyboardRemove())
+                phone_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+                button = types.KeyboardButton(locale_manager.phone_number(lang), request_contact=True)
+                phone_markup.add(button)
+                bot.send_message(user_id, locale_manager.insert_phone_number(lang), reply_markup=phone_markup)
                 return
-    bot.send_message(user_id, "Insert your age category")
-
-
-@bot.message_handler(
-    func=lambda message: determine_operation(message.from_user.id, 'set_date_of_birth') and not_command(message.text),
-    content_types=['text'])
-def set_date_of_birth(message: types.Message):
-    user_id = message.from_user.id
-    date_of_birth: datetime.date
-    try:
-        datetime.datetime.strptime(message.text, "%Y-%m-%d")
-    except ValueError:
-        bot.send_message(user_id, "Insert your date of birth", reply_markup=types.ReplyKeyboardRemove())
-        return
-
-    db_manager.set_date_of_birth(user_id, message.text)
-    phone_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    button = types.KeyboardButton("Phone number", request_contact=True)
-    phone_markup.add(button)
-    bot.send_message(user_id, "Insert your phone number", reply_markup=phone_markup)
+    bot.send_message(user_id, locale_manager.insert_age_category(lang))
 
 
 @bot.message_handler(
@@ -191,23 +187,25 @@ def set_date_of_birth(message: types.Message):
     content_types=['contact'])
 def set_phone_number(message: types.Message):
     user_id = message.from_user.id
+    lang = get_lang_from_db(user_id)
     db_manager.set_phone_number(user_id, message.contact.phone_number)
     markup = types.InlineKeyboardMarkup(row_width=2)
-    button_yes = types.InlineKeyboardButton('Yes', callback_data='True')
-    button_no = types.InlineKeyboardButton('No', callback_data='False')
+    button_yes = types.InlineKeyboardButton(locale_manager.yes(lang), callback_data='True')
+    button_no = types.InlineKeyboardButton(locale_manager.no(lang), callback_data='False')
     markup.add(button_yes, button_no)
-    bot.send_message(user_id, "Do you accept info?", reply_markup=markup)
+    bot.send_message(user_id, locale_manager.info_processing(lang), reply_markup=markup)
 
 
 @bot.callback_query_handler(func=lambda call: determine_operation(call.from_user.id, 'set_info_processing'))
 def set_info_processing(call: types.CallbackQuery):
     user_id = call.from_user.id
-    while True:
-        if call.data.__eq__('True'):
-            db_manager.set_info_processing(user_id, True)
-            break
     lang = get_lang_from_db(user_id)
-    bot.send_message(user_id, 'Thank you for enrollment!', reply_markup=gen_main_menu(lang))
+    if call.data.__eq__('True'):
+        db_manager.set_info_processing(user_id, True)
+    else:
+        bot.send_message(user_id, locale_manager.enrollment_not_accepted(lang), reply_markup=gen_main_menu(lang))
+
+    bot.send_message(user_id, locale_manager.enrollment_thanks(lang), reply_markup=gen_main_menu(lang))
     db_object.execute(f"UPDATE enrollments SET filled = {True} WHERE user_id = {user_id}")
     db_connection.commit()
 

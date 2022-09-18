@@ -37,15 +37,16 @@ def set_club(user_id: int, club: str):
     p_type = db_object.fetchone()[0]
     eg = locale_manager.participant(main.get_lang_from_db(user_id=user_id))["coach"]
     operation: str
+    lang = main.get_lang_from_db()
     if str(p_type).strip().__eq__(eg):
         operation = 'set_phone_number'
         phone_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        button = types.KeyboardButton("Phone number", request_contact=True)
+        button = types.KeyboardButton(locale_manager.phone_number(lang), request_contact=True)
         phone_markup.add(button)
-        bot.send_message(user_id, "Insert your phone number", reply_markup=phone_markup)
+        bot.send_message(user_id, locale_manager.insert_phone_number(lang), reply_markup=phone_markup)
     else:
         operation = 'set_coach'
-        bot.send_message(user_id, "Insert your coach: ")
+        bot.send_message(user_id, locale_manager.insert_coach(lang))
     set_str_param_and_operation(user_id=user_id, param_name='club', param_value=club,
                                 operation_name=operation)
 
@@ -57,13 +58,8 @@ def set_coach(user_id: int, coach: str):
 
 def set_age_category(user_id: int, age_category: str):
     set_str_param_and_operation(
-        user_id=user_id, param_name='age_category', param_value=age_category, operation_name='set_date_of_birth'
+        user_id=user_id, param_name='age_category', param_value=age_category, operation_name='set_phone_number'
     )
-
-
-def set_date_of_birth(user_id: int, date_of_birth: str):
-    set_str_param_and_operation(user_id=user_id, param_name='date_of_birth', param_value=date_of_birth,
-                                operation_name='set_phone_number')
 
 
 def set_phone_number(user_id: int, phone_number: str):
@@ -130,10 +126,9 @@ def fetch_enrollments(user_id: int):
                                 club=enrollment_row[6].strip(),
                                 coach=enrollment_row[7].strip(),
                                 age_category=enrollment_row[8].strip(),
-                                date_of_birth=enrollment_row[9],
-                                phone_number=enrollment_row[10].strip(),
-                                allows_info_processing=enrollment_row[11],
-                                paid=enrollment_row[12]
+                                phone_number=enrollment_row[9].strip(),
+                                allows_info_processing=enrollment_row[10],
+                                paid=enrollment_row[11]
                                 )
         enrollments.append(enrollment)
     return enrollments
@@ -149,13 +144,12 @@ class Enrollment:
     __club: str
     __coach: str
     __age_category: str
-    __date_of_birth: date
     __phone_number: str
     __allows_info_processing: bool
     __paid: bool
 
     def __init__(self, event_id: int, user_id: int, first_name: str, last_name: str, town: str, participant_type: str,
-                 club: str, coach: str, age_category: str, date_of_birth: date, phone_number: str,
+                 club: str, coach: str, age_category: str, phone_number: str,
                  allows_info_processing: bool, paid: bool):
         self.__event_id = event_id
         self.__user_id = user_id
@@ -166,7 +160,6 @@ class Enrollment:
         self.__club = club
         self.__coach = coach
         self.__age_category = age_category
-        self.__date_of_birth = date_of_birth
         self.__phone_number = phone_number
         self.__allows_info_processing = allows_info_processing
         self.__paid = paid
@@ -206,10 +199,6 @@ class Enrollment:
     @property
     def age_category(self):
         return self.__age_category
-
-    @property
-    def date_of_birth(self):
-        return self.__date_of_birth
 
     @property
     def phone_number(self):
