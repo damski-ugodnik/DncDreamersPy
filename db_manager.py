@@ -37,7 +37,7 @@ def set_club(user_id: int, club: str):
     p_type = db_object.fetchone()[0]
     eg = locale_manager.participant(main.get_lang_from_db(user_id=user_id))["coach"]
     operation: str
-    if p_type == eg:
+    if str(p_type).strip().__eq__(eg)
         operation = 'set_phone_number'
     else:
         operation = 'set_coach'
