@@ -86,6 +86,10 @@ def show_chosen_event(call: types.CallbackQuery):
     configure_event_msg()
 
 
+def not_command(text: str):
+    return text.find("/") != 0
+
+
 @bot.callback_query_handler(func=lambda call: call.data.find("_enroll") >= 0)
 def enroll_event(call: types.CallbackQuery):
     event_id = int(call.data[:call.data.find("_enroll")])
@@ -97,7 +101,8 @@ def enroll_event(call: types.CallbackQuery):
     bot.send_message(call.from_user.id, "are you:", reply_markup=markup)
 
 
-@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_type'))
+@bot.message_handler(
+    func=lambda message: determine_operation(message.from_user.id, 'set_type') and not_command(message.text))
 def set_participant_type(message: types.Message):
     user_id = message.from_user.id
     lang = get_lang_from_db(user_id)
@@ -110,54 +115,70 @@ def set_participant_type(message: types.Message):
     bot.send_message(message.from_user.id, text, reply_markup=types.ReplyKeyboardRemove())
 
 
-@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_name'))
+@bot.message_handler(
+    func=lambda message: determine_operation(message.from_user.id, 'set_name') and not_command(message.text))
 def set_name(message: types.Message):
     user_id = message.from_user.id
     db_manager.set_name(user_id=user_id, name=message.text)
     bot.send_message(user_id, "Insert your town:")
 
 
-@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_town'))
+@bot.message_handler(
+    func=lambda message: determine_operation(message.from_user.id, 'set_town') and not_command(message.text))
 def set_town(message: types.Message):
     user_id = message.from_user.id
     db_manager.set_town(user_id=user_id, town=message.text)
     bot.send_message(user_id, "Insert your club:")
 
 
-@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_club'))
+@bot.message_handler(
+    func=lambda message: determine_operation(message.from_user.id, 'set_club') and not_command(message.text))
 def set_club(message: types.Message):
     user_id = message.from_user.id
     db_manager.set_club(user_id, message.text)
     bot.send_message(user_id, "Insert your coach: ")
 
 
-@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_coach'))
+@bot.message_handler(
+    func=lambda message: determine_operation(message.from_user.id, 'set_coach') and not_command(message.text))
 def set_coach(message: types.Message):
     user_id = message.from_user.id
     db_manager.set_coach(user_id, message.text)
-    buttons = ['U16', 'U19', 'U21']
+    lang = get_lang_from_db(user_id)
+    buttons = locale_manager.age_categories(lang)
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(*buttons)
     bot.send_message(user_id, "Insert your age category", reply_markup=markup)
 
 
-@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_age_category'))
+@bot.message_handler(
+    func=lambda message: determine_operation(message.from_user.id, 'set_age_category') and not_command(message.text))
 def set_age_category(message: types.Message):
     user_id = message.from_user.id
-    db_manager.set_age_category(user_id, message.text)
-    bot.send_message(user_id, "Insert your date of birth", reply_markup=types.ReplyKeyboardRemove())
+    lang = get_lang_from_db(user_id)
+    categories = locale_manager.age_categories(lang)
+    for s in categories:
+        for category in s:
+            if message.text.__eq__(category):
+                db_manager.set_age_category(user_id, message.text)
+                bot.send_message(user_id, "Insert your date of birth", reply_markup=types.ReplyKeyboardRemove())
+                return
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add(*categories)
+    bot.send_message(user_id, "Insert your age category", reply_markup=markup)
 
 
-@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_date_of_birth'))
+@bot.message_handler(
+    func=lambda message: determine_operation(message.from_user.id, 'set_date_of_birth') and not_command(message.text),
+    content_types=['text'])
 def set_date_of_birth(message: types.Message):
     user_id = message.from_user.id
     date_of_birth: datetime.date
-    while True:
-        try:
-            date = datetime.datetime.strptime(message.text, "%Y-%m-%d")
-            break
-        except ValueError:
-            continue
+    try:
+        datetime.datetime.strptime(message.text, "%Y-%m-%d")
+    except ValueError:
+        bot.send_message(user_id, "Insert your date of birth", reply_markup=types.ReplyKeyboardRemove())
+        return
 
     db_manager.set_date_of_birth(user_id, message.text)
     phone_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -166,8 +187,9 @@ def set_date_of_birth(message: types.Message):
     bot.send_message(user_id, "Insert your phone number", reply_markup=phone_markup)
 
 
-@bot.message_handler(func=lambda message: determine_operation(message.from_user.id, 'set_phone_number'),
-                     content_types=['contact'])
+@bot.message_handler(
+    func=lambda message: determine_operation(message.from_user.id, 'set_phone_number') and not_command(message.text),
+    content_types=['contact'])
 def set_phone_number(message: types.Message):
     user_id = message.from_user.id
     db_manager.set_phone_number(user_id, message.contact.phone_number)

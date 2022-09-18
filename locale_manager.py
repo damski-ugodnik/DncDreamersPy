@@ -60,3 +60,12 @@ def insert_your_name_couple(lang: str):
             return 'Insert name and surname of you and your partner'
         case 'Українська':
             return 'Введіть ваше прізвище та ім\'я та П.І. партнера'
+
+
+def age_categories(lang: str):
+    match lang:
+        case 'English':
+            return [['Under 10', 'Under 12', 'Under 14', 'Under 16'], ['Under 19', 'Under 21', 'Over 21']]
+        case 'Українська':
+            return [['До 10 років', 'До 12 років', 'До 14 років', 'До 16 років'],
+                    ['До 19 років', 'До 21 року', 'Більше 21 року']]
