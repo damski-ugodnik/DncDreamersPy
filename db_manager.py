@@ -37,7 +37,7 @@ def set_club(user_id: int, club: str):
     p_type = db_object.fetchone()[0]
     eg = locale_manager.participant(main.get_lang_from_db(user_id=user_id))["coach"]
     operation: str
-    lang = main.get_lang_from_db()
+    lang = main.get_lang_from_db(user_id)
     if str(p_type).strip().__eq__(eg):
         operation = 'set_phone_number'
         phone_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
