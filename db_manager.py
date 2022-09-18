@@ -12,7 +12,7 @@ def init_enrollment(event_id: int, user_id: int):
             db_object.execute(f"DELETE FROM enrollments WHERE enrollment_id = {i[0]}")
     db_object.execute(f"INSERT INTO enrollments(event_id, user_id, filled) VALUES({event_id},{user_id}, {False})")
     db_connection.commit()
-    db_object.execute(f"UPDATE users SET current_operation = %s WHERE telegram_id = {user_id}", ('set_type', ))
+    db_object.execute(f"UPDATE users SET current_operation = %s WHERE telegram_id = {user_id}", ('set_type',))
     db_connection.commit()
 
 
@@ -37,7 +37,7 @@ def set_club(user_id: int, club: str):
     p_type = db_object.fetchone()[0]
     eg = locale_manager.participant(main.get_lang_from_db(user_id=user_id))["coach"]
     operation: str
-    if str(p_type).strip().__eq__(eg)
+    if str(p_type).strip().__eq__(eg):
         operation = 'set_phone_number'
     else:
         operation = 'set_coach'
@@ -75,7 +75,8 @@ def set_str_param_and_operation(user_id: int, param_name: str, param_value: str,
     db_object.execute(f"UPDATE enrollments SET {param_name.strip()} = %s WHERE user_id = {user_id} AND filled = FALSE",
                       (param_value,))
     db_connection.commit()
-    db_object.execute(f"UPDATE users SET current_operation = %s WHERE telegram_id = {user_id}", (operation_name.strip(),))
+    db_object.execute(f"UPDATE users SET current_operation = %s WHERE telegram_id = {user_id}",
+                      (operation_name.strip(),))
     db_connection.commit()
 
 
