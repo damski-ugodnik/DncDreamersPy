@@ -185,11 +185,10 @@ def set_info_processing(call: types.CallbackQuery):
         if call.data.__eq__('True'):
             db_manager.set_info_processing(user_id, True)
             break
-
-    show_menu(message=call.message)
+    lang = get_lang_from_db(user_id)
+    bot.send_message(user_id, 'Thank you for enrollment!', reply_markup=gen_main_menu(lang))
     db_object.execute(f"UPDATE enrollments SET filled = {True} WHERE user_id = {user_id}")
     db_connection.commit()
-
 
 
 def determine_operation(user_id: int, operation_name: str):
