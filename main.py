@@ -45,7 +45,8 @@ def gen_main_menu(lang: str):
 def create_enrollments_list(enrollments: dict[str, str]):
     enrollments_menu = types.InlineKeyboardMarkup(row_width=1)
     for key in enrollments:
-        button = types.InlineKeyboardButton(text=enrollments[key], callback_data=key+"_enrollment")
+        text = enrollments[key]
+        button = types.InlineKeyboardButton(text=enrollments[key])
         enrollments_menu.add(button)
     return enrollments_menu
 
