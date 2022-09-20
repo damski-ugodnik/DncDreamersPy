@@ -118,8 +118,8 @@ def fetch_enrollments(user_id: int):
     result = db_object.fetchall()
     brief_enrollments = dict()
     for enrollment_row in result:
-        enrollment_str = result[0].__str__() + "-\n" + result[1].__str__()
-        brief_enrollments[result[3].__str__()] = enrollment_str
+        enrollment_str = enrollment_row[0].__str__().strip() + "-\n" + enrollment_row[1].__str__().strip()
+        brief_enrollments[enrollment_row[3].__str__()] = enrollment_str
     return brief_enrollments
 
 
