@@ -114,7 +114,7 @@ def fetch_events():
 
 def fetch_enrollments(user_id: int):
     db_object.execute(
-        f"SELECT events.event_name, enrollments.participant_name, enrollments.enrollment_id FROM events INNER JOIN enrollments on enrollments.user_id = {user_id}")
+        f"SELECT events.event_name, participant_name, enrollment_id FROM events INNER JOIN enrollments e on events.id = e.event_id and e.user_id = {user_id}")
     result = db_object.fetchall()
     brief_enrollments = dict()
     for enrollment_row in result:
