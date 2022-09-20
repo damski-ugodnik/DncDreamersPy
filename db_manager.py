@@ -119,7 +119,7 @@ def fetch_enrollments(user_id: int):
     brief_enrollments = dict()
     for enrollment_row in result:
         enrollment_str = enrollment_row[0].__str__().strip() + "-\n" + enrollment_row[1].__str__().strip()
-        brief_enrollments[enrollment_row[3].__str__()] = enrollment_str
+        brief_enrollments[enrollment_row[2].__str__()] = enrollment_str
     return brief_enrollments
 
 
