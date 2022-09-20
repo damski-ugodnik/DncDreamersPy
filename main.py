@@ -42,7 +42,7 @@ def gen_main_menu(lang: str):
     return main_menu
 
 
-def create_enrollments_list(enrollments: dict[str,str]):
+def create_enrollments_list(enrollments: dict[str, str]):
     enrollments_menu = types.InlineKeyboardMarkup(row_width=1)
     for key in enrollments:
         button = types.InlineKeyboardButton(text=enrollments[key], callback_data=key+"_enrollment")
@@ -57,7 +57,7 @@ def check_enrollments(call: types.CallbackQuery):
     bot.send_message(user_id, "your enrollments:", reply_markup=create_enrollments_list(enrollments))
 
 
-def create_events_list(events: list[db_manager.Event]):
+def create_events_list(events):
     events_menu = types.InlineKeyboardMarkup(row_width=1)
     for event in events:
         button = types.InlineKeyboardButton(text=f"{event.name}", callback_data=f"{event.event_id}" + "_event")
