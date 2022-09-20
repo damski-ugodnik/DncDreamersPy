@@ -42,7 +42,22 @@ def gen_main_menu(lang: str):
     return main_menu
 
 
-def create_events_list(events: list):
+def create_enrollments_list(enrollments: dict[str,str]):
+    enrollments_menu = types.InlineKeyboardMarkup(row_width=1)
+    for key in enrollments:
+        button = types.InlineKeyboardButton(text=enrollments[key], callback_data=key+"_enrollment")
+        enrollments_menu.add(button)
+    return enrollments_menu
+
+
+@bot.callback_query_handler(func=lambda call: call.data == 'check_enrollments')
+def check_enrollments(call: types.CallbackQuery):
+    user_id = call.from_user.id
+    enrollments = db_manager.fetch_enrollments(user_id)
+    bot.send_message(user_id, "your enrollments:", reply_markup=create_enrollments_list(enrollments))
+
+
+def create_events_list(events: list[db_manager.Event]):
     events_menu = types.InlineKeyboardMarkup(row_width=1)
     for event in events:
         button = types.InlineKeyboardButton(text=f"{event.name}", callback_data=f"{event.event_id}" + "_event")
@@ -90,6 +105,7 @@ def show_chosen_event(call: types.CallbackQuery):
             return text
 
         bot.send_message(user_id, configure_text(), reply_markup=gen_markup_for_event_msg())
+        bot.send_photo()
 
     configure_event_msg()
 
@@ -203,7 +219,8 @@ def set_info_processing(call: types.CallbackQuery):
     if call.data.__eq__('True'):
         db_manager.set_info_processing(user_id, True)
     else:
-        bot.send_message(user_id, locale_manager.enrollment_not_accepted(lang), reply_markup=types.ReplyKeyboardRemove())
+        bot.send_message(user_id, locale_manager.enrollment_not_accepted(lang),
+                         reply_markup=types.ReplyKeyboardRemove())
 
     bot.send_message(user_id, locale_manager.enrollment_thanks(lang), reply_markup=types.ReplyKeyboardRemove())
     bot.send_message(user_id, locale_manager.main_menu(lang=lang), reply_markup=gen_main_menu(lang=lang))

@@ -113,32 +113,20 @@ def fetch_events():
 
 
 def fetch_enrollments(user_id: int):
-    db_object.execute(f"SELECT * FROM enrollments WHERE user_id = {user_id}")
+    db_object.execute(
+        f"SELECT events.event_name, enrollments.participant_name, enrollments.enrollment_id FROM events INNER JOIN enrollments on enrollments.user_id = {user_id}")
     result = db_object.fetchall()
-    enrollments = list()
+    brief_enrollments = dict()
     for enrollment_row in result:
-        enrollment = Enrollment(event_id=enrollment_row[0],
-                                user_id=enrollment_row[1],
-                                first_name=enrollment_row[2].strip(),
-                                last_name=enrollment_row[3].strip(),
-                                town=enrollment_row[4].strip(),
-                                participant_type=enrollment_row[5].strip(),
-                                club=enrollment_row[6].strip(),
-                                coach=enrollment_row[7].strip(),
-                                age_category=enrollment_row[8].strip(),
-                                phone_number=enrollment_row[9].strip(),
-                                allows_info_processing=enrollment_row[10],
-                                paid=enrollment_row[11]
-                                )
-        enrollments.append(enrollment)
-    return enrollments
+        enrollment_str = result[0].__str__() + "-\n" + result[1].__str__()
+        brief_enrollments[result[3].__str__()] = enrollment_str
+    return brief_enrollments
 
 
 class Enrollment:
     __event_id: int
     __user_id: int
-    __first_name: str
-    __last_name: str
+    __participant_name: str
     __town: str
     __participant_type: str
     __club: str
@@ -148,13 +136,12 @@ class Enrollment:
     __allows_info_processing: bool
     __paid: bool
 
-    def __init__(self, event_id: int, user_id: int, first_name: str, last_name: str, town: str, participant_type: str,
+    def __init__(self, event_id: int, user_id: int, participant_name: str, town: str, participant_type: str,
                  club: str, coach: str, age_category: str, phone_number: str,
                  allows_info_processing: bool, paid: bool):
         self.__event_id = event_id
         self.__user_id = user_id
-        self.__first_name = first_name
-        self.__last_name = last_name
+        self.__participant_name = participant_name
         self.__town = town
         self.__participant_type = participant_type
         self.__club = club
@@ -173,12 +160,8 @@ class Enrollment:
         return self.__user_id
 
     @property
-    def first_name(self):
-        return self.__first_name
-
-    @property
-    def last_name(self):
-        return self.__last_name
+    def participant_name(self):
+        return self.__participant_name
 
     @property
     def town(self):
