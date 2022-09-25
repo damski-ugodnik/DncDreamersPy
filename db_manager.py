@@ -123,8 +123,8 @@ def fetch_enrollments(user_id: int):
     return brief_enrollments
 
 
-def fetch_enrollment(user_id: int, event_id: int):
-    db_object.execute(f"SELECT * FROM enrollments WHERE user_id = {user_id} AND event_id = {event_id}")
+def fetch_enrollment(enrollment_id):
+    db_object.execute(f"SELECT * FROM enrollments WHERE enrollment_id = {enrollment_id}")
     result = db_object.fetchone()
     enrollment = Enrollment(
         event_id=result[1],
