@@ -64,7 +64,7 @@ def show_chosen_enrollment(call: types.CallbackQuery):
 
     def configure_enrollment_msg():
         user_id = call.from_user.id
-        enrollment = db_manager.fetch_enrollment(user_id, enrollment_id)
+        enrollment = db_manager.fetch_enrollment(enrollment_id)
 
         def gen_markup_for_enrollment_msg():
             lang = get_lang_from_db(user_id)
@@ -80,7 +80,7 @@ def show_chosen_enrollment(call: types.CallbackQuery):
             return markup
 
         def configure_text():
-            text = "ge"
+            text = enrollment.participant_name
             return text
 
         bot.send_message(user_id, configure_text(), reply_markup=gen_markup_for_enrollment_msg())
