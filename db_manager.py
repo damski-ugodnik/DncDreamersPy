@@ -118,9 +118,28 @@ def fetch_enrollments(user_id: int):
     result = db_object.fetchall()
     brief_enrollments = dict()
     for enrollment_row in result:
-        enrollment_str = enrollment_row[0].__str__().strip() + "-\n" + enrollment_row[1].__str__().strip()
+        enrollment_str = enrollment_row[0].__str__().strip() + " - " + enrollment_row[1].__str__().strip()
         brief_enrollments[enrollment_row[2].__str__()] = enrollment_str
     return brief_enrollments
+
+
+def fetch_enrollment(user_id: int, event_id: int):
+    db_object.execute(f"SELECT * FROM enrollments WHERE user_id = {user_id} AND event_id = {event_id}")
+    result = db_object.fetchone()
+    enrollment = Enrollment(
+        event_id=result[1],
+        user_id=result[2],
+        participant_name=result[3],
+        town=result[4],
+        participant_type=result[5],
+        club=result[6],
+        age_category=result[7],
+        phone_number=result[8],
+        allows_info_processing=True,
+        paid=result[10],
+        coach=result[12]
+    )
+    return enrollment
 
 
 class Enrollment:

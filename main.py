@@ -46,7 +46,7 @@ def create_enrollments_list(enrollments: dict[str, str]):
     enrollments_menu = types.InlineKeyboardMarkup(row_width=1)
     for key in enrollments:
         text = enrollments[key]
-        button = types.InlineKeyboardButton(text=text, callback_data="gr")
+        button = types.InlineKeyboardButton(text=text, callback_data=key + "_enrollment")
         enrollments_menu.add(button)
     return enrollments_menu
 
@@ -56,6 +56,36 @@ def check_enrollments(call: types.CallbackQuery):
     user_id = call.from_user.id
     enrollments = db_manager.fetch_enrollments(user_id)
     bot.send_message(user_id, "your enrollments:", reply_markup=create_enrollments_list(enrollments))
+
+
+@bot.callback_query_handler(func=lambda call: str(call.data).find('_enrollment') > -1)
+def show_chosen_enrollment(call: types.CallbackQuery):
+    enrollment_id = int(call.data[:call.data.find('_enrollment')])
+
+    def configure_enrollment_msg():
+        user_id = call.from_user.id
+        enrollment = db_manager.fetch_enrollment(user_id, enrollment_id)
+
+        def gen_markup_for_enrollment_msg():
+            lang = get_lang_from_db(user_id)
+            markup = types.InlineKeyboardMarkup(row_width=2)
+            match lang:
+                case 'English':
+                    markup.add(types.InlineKeyboardButton('Delete', callback_data=f'{enrollment_id}_delete'),
+                               types.InlineKeyboardButton('Back', callback_data='show_events'))
+                case 'Українська':
+                    markup.add(types.InlineKeyboardButton('Видалити', callback_data=f'{enrollment_id}_delete'),
+                               types.InlineKeyboardButton('Назад', callback_data='show_events'))
+
+            return markup
+
+        def configure_text():
+            text = "ge"
+            return text
+
+        bot.send_message(user_id, configure_text(), reply_markup=gen_markup_for_enrollment_msg())
+
+    configure_enrollment_msg()
 
 
 def create_events_list(events):
@@ -76,7 +106,6 @@ def show_events(call: types.CallbackQuery):
 
 @bot.callback_query_handler(func=lambda call: str(call.data).find('_event') > -1)
 def show_chosen_event(call: types.CallbackQuery):
-    bot.answer_callback_query(callback_query_id=call.id, text=call.data)
     event_id = int(call.data[:call.data.find('_event')])
 
     def configure_event_msg():
@@ -106,7 +135,6 @@ def show_chosen_event(call: types.CallbackQuery):
             return text
 
         bot.send_message(user_id, configure_text(), reply_markup=gen_markup_for_event_msg())
-        bot.send_photo()
 
     configure_event_msg()
 
