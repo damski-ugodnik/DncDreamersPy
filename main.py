@@ -54,7 +54,7 @@ def create_enrollments_list(enrollments: dict[str, str]):
     enrollments_menu = types.InlineKeyboardMarkup(row_width=1)
     for key in enrollments:
         text = enrollments[key]
-        button = types.InlineKeyboardButton(text=text+key, callback_data=key + "_enrollment")
+        button = types.InlineKeyboardButton(text=text, callback_data=key + "_enrollment")
         enrollments_menu.add(button)
     enrollments_menu.add(types.InlineKeyboardButton(text='⬅', callback_data='menu'))
     return enrollments_menu
@@ -80,7 +80,7 @@ def show_chosen_enrollment(call: types.CallbackQuery):
             markup = types.InlineKeyboardMarkup(row_width=3)
             match lang:
                 case 'English':
-                    markup.add(types.InlineKeyboardButton('Delete', callback_data=f'{enrollment_id}_delete'),
+                    markup.add(types.InlineKeyboardButton('Delete'+enrollment_id, callback_data=f'{enrollment_id}_delete'),
                                types.InlineKeyboardButton('Back', callback_data='check_enrollments'))
                 case 'Українська':
                     markup.add(types.InlineKeyboardButton('Видалити', callback_data=f'{enrollment_id}_delete'),
