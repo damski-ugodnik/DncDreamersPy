@@ -23,8 +23,9 @@ db_object = db_connection.cursor()
 def terminate_operations(message: types.Message):
     db_object.execute("DELETE FROM enrollments WHERE filled = FALSE")
     db_connection.commit()
-    db_object.execute(f"UPDATE users SET current_operation = null where telegram_id = {message.from_user.id}")
+    db_object.execute("UPDATE users SET current_operation WHERE telegram_id = %s", (message.from_user.id, ))
     db_connection.commit()
+    bot.send_message(message.from_user.id, "jkvrkjvgr")
 
 def get_lang_from_db(user_id: int):
     db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
