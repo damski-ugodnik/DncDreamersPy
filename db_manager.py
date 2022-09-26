@@ -110,7 +110,7 @@ def fetch_events():
                       town=event_row[3].strip(),
                       place=event_row[4].strip(),
                       price=event_row[5],
-                      additional=event_row[6].strip(),
+                      additional=event_row[6],
                       info_url=event_row[7])
         events.append(event)
     return events
@@ -219,11 +219,11 @@ class Event:
     __town: str
     __place: str
     __price: Any
-    __additional: str
+    __additional: Any
     __info_url: Any
 
     def __init__(self, event_id: int, name: str, date_of_issue: date, town: str, place: str, price,
-                 additional: str, info_url: Any):
+                 additional: Any, info_url: Any):
         self.__event_id = event_id
         self.__name = name
         self.__date_of_issue = date_of_issue
