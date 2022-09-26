@@ -124,7 +124,8 @@ def fetch_enrollments(user_id: int):
 
 
 def fetch_enrollment(enrollment_id):
-    db_object.execute(f"SELECT participant_name, event_name, date_of_issue, age_category FROM enrollments INNER JOIN events e on e.id = enrollments.event_id and enrollment_id = {enrollment_id}")
+    db_object.execute(
+        f"SELECT participant_name, event_name, date_of_issue, age_category FROM enrollments INNER JOIN events e on e.id = enrollments.event_id and enrollment_id = {enrollment_id}")
     result = db_object.fetchone()
     return result
 
@@ -132,6 +133,7 @@ def fetch_enrollment(enrollment_id):
 def delete_enr(enrollment_id: int):
     db_object.execute(f"DELETE FROM enrollments WHERE enrollment_id = {enrollment_id}")
     db_connection.commit()
+
 
 class Enrollment:
     __event_id: int

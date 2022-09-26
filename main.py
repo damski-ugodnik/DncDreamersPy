@@ -27,7 +27,10 @@ def get_lang_from_db(user_id: int):
 
 @bot.callback_query_handler(func=lambda call: str(call.data).find('_delete') > -1)
 def delete_enrollment(call: types.CallbackQuery):
-    db_manager.delete_enr(str(call.data).find('_delete'))
+    enr_id = str(call.data).find('_delete')
+    db_manager.delete_enr(enr_id)
+    bot.answer_callback_query(call.from_user.id, f"Deleted {enr_id}")
+    back(call)
 
 
 @bot.message_handler(commands=['mainmenu'])
