@@ -24,7 +24,6 @@ def terminate_operations(user_id: int):
     db_connection.commit()
     db_object.execute("UPDATE users SET current_operation = null WHERE telegram_id = %s", (user_id,))
     db_connection.commit()
-    bot.send_message(user_id, "jkvrkjvgr")
 
 
 def get_lang_from_db(user_id: int):
