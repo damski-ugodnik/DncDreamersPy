@@ -107,7 +107,7 @@ def create_events_list(events):
     return events_menu
 
 
-@bot.callback_query_handler(func=lambda call: call.data == 'back')
+@bot.callback_query_handler(func=lambda call: call.data == 'menu')
 def back(call: types.CallbackQuery):
     show_menu(call.message)
 
