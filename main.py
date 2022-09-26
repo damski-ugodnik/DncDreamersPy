@@ -29,7 +29,7 @@ def get_lang_from_db(user_id: int):
 def delete_enrollment(call: types.CallbackQuery):
     enr_id = str(call.data).find('_delete')
     db_manager.delete_enr(enr_id)
-    bot.answer_callback_query(call.from_user.id, f"Deleted {enr_id}")
+    bot.answer_callback_query(call.id, f"Deleted {enr_id}")
     back(call)
 
 
