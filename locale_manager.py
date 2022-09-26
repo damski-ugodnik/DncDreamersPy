@@ -167,3 +167,17 @@ def ask_for_type(lang: str):
             return 'Insert the type of participant'
         case 'Українська':
             return 'Введіть тип учасника'
+
+
+def event_msg_format(lang: str):
+    match lang:
+        case 'English':
+            return "Name:    {event_name}\n" \
+                   "Date:    {date}\n" \
+                   "Town:    {town}\n" \
+                   "Address: {address}\n"
+        case 'Українська':
+            return "Назва:  {event_name}\n" \
+                   "Дата:   {date}\n" \
+                   "Місто:  {town}\n" \
+                   "Адреса: {address}\n"

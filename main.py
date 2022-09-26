@@ -72,16 +72,15 @@ def show_chosen_enrollment(call: types.CallbackQuery):
             match lang:
                 case 'English':
                     markup.add(types.InlineKeyboardButton('Delete', callback_data=f'{enrollment_id}_delete'),
-                               types.InlineKeyboardButton('Back', callback_data='show_events'))
+                               types.InlineKeyboardButton('Back', callback_data='show_enrollments'))
                 case 'Українська':
                     markup.add(types.InlineKeyboardButton('Видалити', callback_data=f'{enrollment_id}_delete'),
-                               types.InlineKeyboardButton('Назад', callback_data='show_events'))
+                               types.InlineKeyboardButton('Назад', callback_data='show_enrollments'))
 
             return markup
 
         def configure_text():
-            text = enrollment.participant_name
-            return text
+            return " "
 
         bot.send_message(user_id, configure_text(), reply_markup=gen_markup_for_enrollment_msg())
 
@@ -126,13 +125,11 @@ def show_chosen_event(call: types.CallbackQuery):
             return markup
 
         def configure_text():
-            text = f"{event.name}\n" \
-                   f"{event.date_of_issue}\n" \
-                   f"{event.town}\n" \
-                   f"{event.place}\n" \
-                   f"{event.price}\n" \
-                   f"{event.additional}\n"
-            return text
+            text = locale_manager.event_msg_format(get_lang_from_db(user_id))
+            return text.format(event_name=event.name,
+                               date=event.date_of_issue,
+                               town=event.town,
+                               address=event.place)
 
         bot.send_message(user_id, configure_text(), reply_markup=gen_markup_for_event_msg())
 
