@@ -133,6 +133,7 @@ def fetch_enrollment(enrollment_id):
 def delete_enr(enrollment_id: int):
     db_object.execute(f"DELETE FROM enrollments WHERE enrollment_id = {enrollment_id}")
     db_connection.commit()
+    db_object.close()
 
 
 class Enrollment:
