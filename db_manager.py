@@ -93,7 +93,7 @@ def fetch_event(event_id: int):
                       date_of_issue=result[2],
                       town=result[3].strip(),
                       place=result[4].strip(),
-                      price=int(result[5]),
+                      price=result[5],
                       additional=result[6].strip(),
                       info_url=result[7])
     return res_event
@@ -109,7 +109,7 @@ def fetch_events():
                       date_of_issue=event_row[2],
                       town=event_row[3].strip(),
                       place=event_row[4].strip(),
-                      price=int(event_row[5]),
+                      price=event_row[5],
                       additional=event_row[6].strip(),
                       info_url=event_row[7])
         events.append(event)
@@ -218,11 +218,11 @@ class Event:
     __date_of_issue: date
     __town: str
     __place: str
-    __price: int
+    __price: Any
     __additional: str
     __info_url: Any
 
-    def __init__(self, event_id: int, name: str, date_of_issue: date, town: str, place: str, price: int,
+    def __init__(self, event_id: int, name: str, date_of_issue: date, town: str, place: str, price,
                  additional: str, info_url: Any):
         self.__event_id = event_id
         self.__name = name
