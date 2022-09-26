@@ -109,7 +109,9 @@ def create_events_list(events):
 
 @bot.callback_query_handler(func=lambda call: call.data == 'menu')
 def back(call: types.CallbackQuery):
-    show_menu(call.message)
+    user_id = call.from_user.id
+    lang = get_lang_from_db(user_id=user_id)
+    bot.send_message(user_id, locale_manager.main_menu(lang=lang), reply_markup=gen_main_menu(lang=lang))
 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'show_events')
