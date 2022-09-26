@@ -19,13 +19,12 @@ db_connection = psycopg2.connect(DB_URI, sslmode="require")
 db_object = db_connection.cursor()
 
 
-@bot.message_handler(content_types=['commands'])
-def terminate_operations(message: types.Message):
+def terminate_operations(user_id: int):
     db_object.execute("DELETE FROM enrollments WHERE filled = FALSE")
     db_connection.commit()
-    db_object.execute("UPDATE users SET current_operation WHERE telegram_id = %s", (message.from_user.id, ))
+    db_object.execute("UPDATE users SET current_operation WHERE telegram_id = %s", (user_id, ))
     db_connection.commit()
-    bot.send_message(message.from_user.id, "jkvrkjvgr")
+    bot.send_message(user_id, "jkvrkjvgr")
 
 def get_lang_from_db(user_id: int):
     db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
@@ -44,6 +43,7 @@ def delete_enrollment(call: types.CallbackQuery):
 @bot.message_handler(commands=['mainmenu'])
 def show_menu(message: types.Message):
     user_id = message.from_user.id
+    terminate_operations(user_id)
     lang = get_lang_from_db(user_id=user_id)
     bot.send_message(user_id, locale_manager.main_menu(lang=lang), reply_markup=gen_main_menu(lang=lang))
 
@@ -298,6 +298,7 @@ def determine_operation(user_id: int, operation_name: str):
 @bot.message_handler(commands=['start'])
 def start_msg(message: types.Message):
     user_id = message.from_user.id
+    terminate_operations(user_id)
     db_object.execute(f"SELECT telegram_id FROM users WHERE telegram_id= %s", (user_id,))
     result = db_object.fetchone()
     if not result:
@@ -328,6 +329,7 @@ def lang_chosen(message: types.Message):
 
 @bot.message_handler(commands=['changelang'])
 def choose_lang(message: types.Message):
+    terminate_operations(message.from_user.id)
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     buttons = ["Українська", "English"]
     markup.add(*buttons)
@@ -336,6 +338,7 @@ def choose_lang(message: types.Message):
 
 @bot.message_handler(commands=['slavaukraini'])
 def nicewords_msg(message: telebot.types.Message):
+    terminate_operations(message.from_user.id)
     bot.send_message(message.chat.id, nice_words_generator.generate_some_taunts())
 
 
