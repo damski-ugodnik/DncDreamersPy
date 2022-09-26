@@ -107,7 +107,8 @@ def fetch_events():
                       town=event_row[3].strip(),
                       place=event_row[4].strip(),
                       price=int(event_row[5]),
-                      additional=event_row[6].strip())
+                      additional=event_row[6].strip(),
+                      info_url=event_row[7].strip)
         events.append(event)
     return events
 
@@ -216,9 +217,10 @@ class Event:
     __place: str
     __price: int
     __additional: str
+    __info_url: str
 
     def __init__(self, event_id: int, name: str, date_of_issue: date, town: str, place: str, price: int,
-                 additional: str):
+                 additional: str, info_url: str):
         self.__event_id = event_id
         self.__name = name
         self.__date_of_issue = date_of_issue
@@ -226,6 +228,7 @@ class Event:
         self.__place = place
         self.__price = price
         self.__additional = additional
+        self.__info_url = info_url
 
     @property
     def event_id(self):
@@ -254,3 +257,7 @@ class Event:
     @property
     def additional(self):
         return self.__additional
+
+    @property
+    def url(self):
+        return self.__info_url

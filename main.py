@@ -139,11 +139,15 @@ def show_chosen_event(call: types.CallbackQuery):
             match lang:
                 case 'English':
                     markup.add(types.InlineKeyboardButton('Enroll', callback_data=f'{event_id}_enroll'),
-                               types.InlineKeyboardButton('Back', callback_data='show_events'))
+                               types.InlineKeyboardButton('Back', callback_data='show_events'),
+                               )
+                    if len(event.url) > 0:
+                        markup.add(types.InlineKeyboardButton('Full information', url=event.url))
                 case 'Українська':
                     markup.add(types.InlineKeyboardButton('Записатися', callback_data=f'{event_id}_enroll'),
                                types.InlineKeyboardButton('Назад', callback_data='show_events'))
-
+                    if len(event.url) > 0:
+                        markup.add(types.InlineKeyboardButton('Повна інформація', url=event.url))
             return markup
 
         def configure_text():
