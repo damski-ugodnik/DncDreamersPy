@@ -19,6 +19,11 @@ db_connection = psycopg2.connect(DB_URI, sslmode="require")
 db_object = db_connection.cursor()
 
 
+@bot.message_handler(content_types=['commands'])
+def terminate_operations(message: types.Message):
+    db_object.execute("DELETE FROM enrollments WHERE filled = FALSE")
+    db_connection.commit()
+
 def get_lang_from_db(user_id: int):
     db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
     lang = db_object.fetchone()[0].strip()

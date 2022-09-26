@@ -90,9 +90,9 @@ def insert_club(lang: str):
 def insert_coach(lang: str):
     match lang:
         case 'English':
-            return 'Insert your coach name'
+            return 'Insert your coach Name and Surname'
         case 'Українська':
-            return 'Введіть ім\'я вашого тренера'
+            return 'Введіть прізвище та ім\'я вашого тренера'
 
 
 def insert_phone_number(lang: str):
