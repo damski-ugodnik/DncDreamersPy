@@ -1,3 +1,5 @@
+from typing import Any
+
 import main
 from main import db_object, db_connection, bot, types
 from datetime import date
@@ -92,7 +94,8 @@ def fetch_event(event_id: int):
                       town=result[3].strip(),
                       place=result[4].strip(),
                       price=int(result[5]),
-                      additional=result[6].strip())
+                      additional=result[6].strip(),
+                      info_url=result[7])
     return res_event
 
 
@@ -108,7 +111,7 @@ def fetch_events():
                       place=event_row[4].strip(),
                       price=int(event_row[5]),
                       additional=event_row[6].strip(),
-                      info_url=event_row[7].strip)
+                      info_url=event_row[7])
         events.append(event)
     return events
 
@@ -217,10 +220,10 @@ class Event:
     __place: str
     __price: int
     __additional: str
-    __info_url: str
+    __info_url: Any
 
     def __init__(self, event_id: int, name: str, date_of_issue: date, town: str, place: str, price: int,
-                 additional: str, info_url: str):
+                 additional: str, info_url: Any):
         self.__event_id = event_id
         self.__name = name
         self.__date_of_issue = date_of_issue
