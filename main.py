@@ -25,6 +25,11 @@ def get_lang_from_db(user_id: int):
     return lang
 
 
+@bot.callback_query_handler(func=lambda call: str(call.data).find('_delete') > -1)
+def delete_enrollment(call: types.CallbackQuery):
+    db_manager.delete_enr(str(call.data).find('_delete'))
+
+
 @bot.message_handler(commands=['mainmenu'])
 def show_menu(message: types.Message):
     user_id = message.from_user.id
@@ -48,6 +53,7 @@ def create_enrollments_list(enrollments: dict[str, str]):
         text = enrollments[key]
         button = types.InlineKeyboardButton(text=text, callback_data=key + "_enrollment")
         enrollments_menu.add(button)
+    enrollments_menu.add(types.InlineKeyboardButton(text='⬅', callback_data='menu'))
     return enrollments_menu
 
 
@@ -68,19 +74,24 @@ def show_chosen_enrollment(call: types.CallbackQuery):
 
         def gen_markup_for_enrollment_msg():
             lang = get_lang_from_db(user_id)
-            markup = types.InlineKeyboardMarkup(row_width=2)
+            markup = types.InlineKeyboardMarkup(row_width=3)
             match lang:
                 case 'English':
                     markup.add(types.InlineKeyboardButton('Delete', callback_data=f'{enrollment_id}_delete'),
-                               types.InlineKeyboardButton('Back', callback_data='show_enrollments'))
+                               types.InlineKeyboardButton('Back', callback_data='check_enrollments'))
                 case 'Українська':
                     markup.add(types.InlineKeyboardButton('Видалити', callback_data=f'{enrollment_id}_delete'),
-                               types.InlineKeyboardButton('Назад', callback_data='show_enrollments'))
+                               types.InlineKeyboardButton('Назад', callback_data='check_enrollments'))
 
             return markup
 
         def configure_text():
-            return " "
+            return locale_manager.enrollment_msg_format(get_lang_from_db(user_id)).format(
+                participant_name=enrollment[0],
+                event=enrollment[1],
+                date=enrollment[2],
+                age_category=enrollment[3]
+            )
 
         bot.send_message(user_id, configure_text(), reply_markup=gen_markup_for_enrollment_msg())
 
@@ -92,7 +103,13 @@ def create_events_list(events):
     for event in events:
         button = types.InlineKeyboardButton(text=f"{event.name}", callback_data=f"{event.event_id}" + "_event")
         events_menu.add(button, row_width=1)
+    events_menu.add(types.InlineKeyboardButton(text='⬅', callback_data='menu'))
     return events_menu
+
+
+@bot.callback_query_handler(func=lambda call: call.data == 'back')
+def back(call: types.CallbackQuery):
+    show_menu(call.message)
 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'show_events')

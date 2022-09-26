@@ -114,7 +114,7 @@ def fetch_events():
 
 def fetch_enrollments(user_id: int):
     db_object.execute(
-        f"SELECT events.event_name, participant_name, enrollment_id FROM events INNER JOIN enrollments e on events.id = e.event_id and e.user_id = {user_id}")
+        f"SELECT event_name, participant_name, enrollment_id FROM events INNER JOIN enrollments e on events.id = e.event_id and e.user_id = {user_id}")
     result = db_object.fetchall()
     brief_enrollments = dict()
     for enrollment_row in result:
@@ -124,23 +124,14 @@ def fetch_enrollments(user_id: int):
 
 
 def fetch_enrollment(enrollment_id):
-    db_object.execute(f"SELECT * FROM enrollments WHERE enrollment_id = {enrollment_id}")
+    db_object.execute(f"SELECT participant_name, event_name, date_of_issue, age_category FROM enrollments INNER JOIN events e on e.id = enrollments.event_id and enrollment_id = {enrollment_id}")
     result = db_object.fetchone()
-    enrollment = Enrollment(
-        event_id=result[1],
-        user_id=result[2],
-        participant_name=result[3],
-        town=result[4],
-        participant_type=result[5],
-        club=result[6],
-        age_category=result[7],
-        phone_number=result[8],
-        allows_info_processing=True,
-        paid=result[10],
-        coach=result[12]
-    )
-    return enrollment
+    return result
 
+
+def delete_enr(enrollment_id: int):
+    db_object.execute(f"DELETE FROM enrollments WHERE enrollment_id = {enrollment_id}")
+    db_connection.commit()
 
 class Enrollment:
     __event_id: int

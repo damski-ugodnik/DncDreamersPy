@@ -181,3 +181,17 @@ def event_msg_format(lang: str):
                    "Дата:   {date}\n" \
                    "Місто:  {town}\n" \
                    "Адреса: {address}\n"
+
+
+def enrollment_msg_format(lang: str):
+    match lang:
+        case 'English':
+            return "Participant:  {participant_name}\n" \
+                   "Event:        {event}\n" \
+                   "Date:         {date}\n" \
+                   "Age category: {age_category}\n"
+        case 'Українська':
+            return "Учасник:          {participant_name}\n" \
+                   "Захід:            {event}\n" \
+                   "Дата:             {date}\n" \
+                   "Вікова категорія: {age_category}\n"
