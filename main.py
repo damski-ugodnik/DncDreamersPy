@@ -22,9 +22,10 @@ db_object = db_connection.cursor()
 def terminate_operations(user_id: int):
     db_object.execute("DELETE FROM enrollments WHERE filled = FALSE")
     db_connection.commit()
-    db_object.execute("UPDATE users SET current_operation WHERE telegram_id = %s", (user_id, ))
+    db_object.execute("UPDATE users SET current_operation = null WHERE telegram_id = %s", (user_id,))
     db_connection.commit()
     bot.send_message(user_id, "jkvrkjvgr")
+
 
 def get_lang_from_db(user_id: int):
     db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
@@ -34,7 +35,7 @@ def get_lang_from_db(user_id: int):
 
 @bot.callback_query_handler(func=lambda call: str(call.data).find('_delete') > -1)
 def delete_enrollment(call: types.CallbackQuery):
-    enr_id = call.data[:str(call.data).find('_delete')]
+    enr_id = int(call.data[:str(call.data).find('_delete')])
     db_manager.delete_enr(enr_id)
     bot.answer_callback_query(call.id, f"Deleted {enr_id}")
     back(call)
