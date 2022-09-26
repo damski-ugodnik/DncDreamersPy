@@ -80,7 +80,7 @@ def show_chosen_enrollment(call: types.CallbackQuery):
             markup = types.InlineKeyboardMarkup(row_width=3)
             match lang:
                 case 'English':
-                    markup.add(types.InlineKeyboardButton('Delete'+enrollment_id.__str__(), callback_data=f'{enrollment_id}_delete'),
+                    markup.add(types.InlineKeyboardButton('Delete', callback_data=f'{enrollment_id}_delete'),
                                types.InlineKeyboardButton('Back', callback_data='check_enrollments'))
                 case 'Українська':
                     markup.add(types.InlineKeyboardButton('Видалити', callback_data=f'{enrollment_id}_delete'),
