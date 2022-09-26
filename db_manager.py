@@ -94,7 +94,7 @@ def fetch_event(event_id: int):
                       town=result[3].strip(),
                       place=result[4].strip(),
                       price=result[5],
-                      additional=result[6].strip(),
+                      additional=result[6],
                       info_url=result[7])
     return res_event
 
