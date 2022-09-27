@@ -19,6 +19,20 @@ db_connection = psycopg2.connect(DB_URI, sslmode="require")
 db_object = db_connection.cursor()
 
 
+@bot.message_handler(commands=['start'])
+def start_msg(message: types.Message):
+    user_id = message.from_user.id
+    terminate_operations(user_id)
+    db_object.execute(f"SELECT telegram_id FROM users WHERE telegram_id= %s", (user_id,))
+    result = db_object.fetchone()
+    if not result:
+        choose_lang(message)
+    else:
+        lang = get_lang_from_db(user_id=user_id)
+        bot.send_message(message.chat.id, locale_manager.greeting(lang), reply_markup=types.ReplyKeyboardRemove())
+        show_menu(message=message)
+
+
 def terminate_operations(user_id: int):
     db_object.execute("DELETE FROM enrollments WHERE filled = FALSE")
     db_connection.commit()
@@ -299,20 +313,6 @@ def determine_operation(user_id: int, operation_name: str):
         return ""
     res = str(result[0]).__eq__(operation_name.strip())
     return res
-
-
-@bot.message_handler(commands=['start'])
-def start_msg(message: types.Message):
-    user_id = message.from_user.id
-    terminate_operations(user_id)
-    db_object.execute(f"SELECT telegram_id FROM users WHERE telegram_id= %s", (user_id,))
-    result = db_object.fetchone()
-    if not result:
-        choose_lang(message)
-    else:
-        lang = get_lang_from_db(user_id=user_id)
-        bot.send_message(message.chat.id, locale_manager.greeting(lang), reply_markup=types.ReplyKeyboardRemove())
-        show_menu(message=message)
 
 
 @bot.message_handler(func=lambda message: message.text == 'English' or message.text == 'Українська')
