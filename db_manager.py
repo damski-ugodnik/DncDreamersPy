@@ -87,12 +87,13 @@ def fetch_event(event_id: int):
     db_object.execute(f"SELECT * FROM events WHERE id = {event_id}")
 
     result = db_object.fetchone()
-
+    if not result:
+        return None
     res_event = Event(event_id=result[0],
-                      name=result[1].strip(),
+                      name=result[1],
                       date_of_issue=result[2],
-                      town=result[3].strip(),
-                      place=result[4].strip(),
+                      town=result[3],
+                      place=result[4],
                       price=result[5],
                       additional=result[6],
                       info_url=result[7])

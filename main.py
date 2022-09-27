@@ -28,7 +28,10 @@ def terminate_operations(user_id: int):
 
 def get_lang_from_db(user_id: int):
     db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
-    lang = db_object.fetchone()[0].strip()
+    result = db_object.fetchone()
+    if not result:
+        return 'English'
+    lang = result[0]
     return lang
 
 
@@ -291,6 +294,8 @@ def set_info_processing(call: types.CallbackQuery):
 def determine_operation(user_id: int, operation_name: str):
     db_object.execute(f"SELECT current_operation FROM users WHERE telegram_id = {user_id}")
     result = db_object.fetchone()
+    if not result:
+        return ""
     res = str(result[0]).strip().__eq__(operation_name.strip())
     return res
 

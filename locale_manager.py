@@ -195,3 +195,11 @@ def enrollment_msg_format(lang: str):
                    "Захід:            {event}\n" \
                    "Дата:             {date}\n" \
                    "Вікова категорія: {age_category}\n"
+
+
+def events(lang: str):
+    match lang:
+        case 'English':
+            return 'Events:'
+        case 'Українська':
+            return 'Заходи:'
