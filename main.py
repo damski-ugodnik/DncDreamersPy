@@ -48,6 +48,7 @@ def show_menu(message: types.Message):
     user_id = message.from_user.id
     terminate_operations(user_id)
     lang = get_lang_from_db(user_id=user_id)
+    bot.send_message(user_id, lang)
     bot.send_message(user_id, locale_manager.main_menu(lang=lang), reply_markup=gen_main_menu(lang=lang))
 
 
