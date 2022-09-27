@@ -23,9 +23,9 @@ def main_menu(lang: str):
 def menu_buttons(lang: str):
     match lang:
         case 'English':
-            return ['Enroll', 'Your enrollments']
+            return {'Enroll', 'Your enrollments'}
         case 'Українська':
-            return ['Записатися', 'Ваші записи']
+            return {'Записатися', 'Ваші записи'}
 
 
 def participant(lang: str):
