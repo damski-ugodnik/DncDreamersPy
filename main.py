@@ -23,7 +23,6 @@ db_object = db_connection.cursor()
 def start_msg(message: types.Message):
     user_id = message.from_user.id
     terminate_operations(user_id)
-    bot.send_message(user_id, message.text)
     db_object.execute(f"SELECT telegram_id FROM users WHERE telegram_id= %s", (user_id,))
     result = db_object.fetchone()
     if not result:
@@ -63,7 +62,6 @@ def show_menu(message: types.Message):
     user_id = message.from_user.id
     terminate_operations(user_id)
     lang = get_lang_from_db(user_id=user_id)
-    bot.send_message(user_id, lang)
     bot.send_message(user_id, locale_manager.main_menu(lang=lang), reply_markup=gen_main_menu(lang=lang))
 
 
@@ -71,8 +69,8 @@ def gen_main_menu(lang: str):
     main_menu = types.InlineKeyboardMarkup()
     buttons_text = locale_manager.menu_buttons(lang=lang)
     main_menu.add(
-        types.InlineKeyboardButton(f"{buttons_text[0]}", callback_data="show_events"),
-        types.InlineKeyboardButton(f"{buttons_text[1]}", callback_data="check_enrollments")
+        types.InlineKeyboardButton(f"enr", callback_data="show_events"),
+        types.InlineKeyboardButton(f"ch", callback_data="check_enrollments")
     )
     return main_menu
 
