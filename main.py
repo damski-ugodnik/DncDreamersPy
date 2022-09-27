@@ -23,6 +23,7 @@ db_object = db_connection.cursor()
 def start_msg(message: types.Message):
     user_id = message.from_user.id
     terminate_operations(user_id)
+    bot.send_message(user_id, message.text)
     db_object.execute(f"SELECT telegram_id FROM users WHERE telegram_id= %s", (user_id,))
     result = db_object.fetchone()
     if not result:
