@@ -296,7 +296,7 @@ def determine_operation(user_id: int, operation_name: str):
     result = db_object.fetchone()
     if not result:
         return ""
-    res = str(result[0]).strip().__eq__(operation_name.strip())
+    res = str(result[0]).__eq__(operation_name.strip())
     return res
 
 
