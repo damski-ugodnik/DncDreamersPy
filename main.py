@@ -30,7 +30,7 @@ def start_msg(message: types.Message):
         choose_lang(message)
     else:
         lang = get_lang_from_db(user_id=user_id)
-        bot.send_message(message.chat.id, locale_manager.greeting(lang), reply_markup=types.ReplyKeyboardRemove())
+        bot.send_message(user_id, "Hello mf", reply_markup=types.ReplyKeyboardRemove())
         show_menu(message=message)
 
 
