@@ -92,11 +92,11 @@ def fetch_event(event_id: int):
     res_event = Event(event_id=result[0],
                       name=result[1],
                       date_of_issue=result[2],
-                      town=result[3],
+                      date_until=result[3],
+                      town=result[4],
                       place=result[4],
-                      price=result[5],
-                      additional=result[6],
-                      info_url=result[7])
+                      additional=result[5],
+                      info_url=result[6])
     return res_event
 
 
@@ -106,11 +106,11 @@ def fetch_events():
     events = list()
     for event_row in result:
         event = Event(event_id=event_row[0],
-                      name=event_row[1].strip(),
+                      name=event_row[1],
                       date_of_issue=event_row[2],
-                      town=event_row[3].strip(),
-                      place=event_row[4].strip(),
-                      price=event_row[5],
+                      date_until=event_row[3],
+                      town=event_row[4],
+                      place=event_row[5],
                       additional=event_row[6],
                       info_url=event_row[7])
         events.append(event)
@@ -217,20 +217,21 @@ class Event:
     __event_id: int
     __name: str
     __date_of_issue: date
+    __date_until: Any
     __town: str
     __place: str
     __price: Any
     __additional: Any
     __info_url: Any
 
-    def __init__(self, event_id: int, name: str, date_of_issue: date, town: str, place: str, price,
+    def __init__(self, event_id: int, name: str, date_of_issue: date, date_until: Any, town: str, place: str,
                  additional: Any, info_url: Any):
         self.__event_id = event_id
         self.__name = name
         self.__date_of_issue = date_of_issue
+        self.__date_until = date_until
         self.__town = town
         self.__place = place
-        self.__price = price
         self.__additional = additional
         self.__info_url = info_url
 
@@ -265,3 +266,7 @@ class Event:
     @property
     def url(self):
         return self.__info_url
+
+    @property
+    def date_until(self):
+        return self.__date_until
