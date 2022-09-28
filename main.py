@@ -72,7 +72,8 @@ def create_enrollments_list(enrollments: dict[str, str]):
 def check_enrollments(call: types.CallbackQuery):
     user_id = call.from_user.id
     enrollments = db_manager.fetch_enrollments(user_id)
-    bot.send_message(user_id, "your enrollments:", reply_markup=create_enrollments_list(enrollments))
+    text = "Your enrollments:" if get_lang_from_db(user_id) == 'English' else "Ваші записи:"
+    bot.send_message(user_id, text, reply_markup=create_enrollments_list(enrollments))
 
 
 @bot.callback_query_handler(func=lambda call: str(call.data).find('_enrollment') > -1)
@@ -129,6 +130,7 @@ def back(call: types.CallbackQuery):
 def show_events(call: types.CallbackQuery):
     events = db_manager.fetch_events()
     user_id = call.from_user.id
+    text = "Upcoming events:" if get_lang_from_db(user_id) == 'English' else "Майбутні заходи"
     bot.answer_callback_query(callback_query_id=call.id, text="available events")
     bot.send_message(chat_id=user_id, text="events:", reply_markup=create_events_list(events=events))
 
