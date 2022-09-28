@@ -322,10 +322,10 @@ def start_msg(message: types.Message):
         show_menu(message=message)
 
 
-@bot.message_handler(func=lambda message: message.text == 'English' or message.text == 'Українська')
-def lang_chosen(message: types.Message):
-    lang = message.text
-    user_id = message.from_user.id
+@bot.callback_query_handler(func=lambda call: call.data == "English" or call.data == "Українська")
+def lang_chosen(call: types.CallbackQuery):
+    lang = call.data
+    user_id = call.from_user.id
     db_object.execute("SELECT telegram_id FROM users WHERE telegram_id = %s", (user_id,))
     result = db_object.fetchone()
     msg_to_send: str
@@ -336,16 +336,16 @@ def lang_chosen(message: types.Message):
         db_object.execute("UPDATE users SET lang = %s WHERE telegram_id = %s", (lang, user_id))
         msg_to_send = locale_manager.lang_choice(lang)
     db_connection.commit()
-    bot.send_message(message.chat.id, msg_to_send, reply_markup=types.ReplyKeyboardRemove())
-    show_menu(message=message)
+    bot.send_message(user_id, msg_to_send, reply_markup=types.ReplyKeyboardRemove())
+    show_menu(message=call.message)
 
 
 @bot.message_handler(commands=['changelang'])
 def choose_lang(message: types.Message):
     terminate_operations(message.from_user.id)
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    buttons = ["Українська", "English"]
-    markup.add(*buttons)
+    markup = types.InlineKeyboardMarkup(resize_keyboard=True)
+    markup.add(types.InlineKeyboardButton("English", callback_data="English"))
+    markup.add(types.InlineKeyboardButton("Українська", callback_data="Українська"))
     bot.send_message(message.chat.id, 'Please choose language / Будь-ласка оберіть мову', reply_markup=markup)
 
 
