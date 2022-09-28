@@ -343,7 +343,7 @@ def lang_chosen(call: types.CallbackQuery):
 @bot.message_handler(commands=['changelang'])
 def choose_lang(message: types.Message):
     terminate_operations(message.from_user.id)
-    markup = types.InlineKeyboardMarkup(resize_keyboard=True)
+    markup = types.InlineKeyboardMarkup(row_width=2)
     markup.add(types.InlineKeyboardButton("English", callback_data="English"))
     markup.add(types.InlineKeyboardButton("Українська", callback_data="Українська"))
     bot.send_message(message.chat.id, 'Please choose language / Будь-ласка оберіть мову', reply_markup=markup)
