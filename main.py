@@ -41,7 +41,7 @@ def delete_enrollment(call: types.CallbackQuery):
     back(call)
 
 
-@bot.message_handler(commands=['mainmenu'])
+@bot.message_handler(commands=['menu'])
 def show_menu(message: types.Message):
     user_id = message.from_user.id
     terminate_operations(user_id)
