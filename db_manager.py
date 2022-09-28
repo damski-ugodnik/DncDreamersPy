@@ -95,8 +95,8 @@ def fetch_event(event_id: int):
                       date_until=result[3],
                       town=result[4],
                       place=result[5],
-                      additional=result[6],
-                      info_url=result[7])
+                      additional="",
+                      info_url=result[6])
     return res_event
 
 
@@ -111,8 +111,8 @@ def fetch_events():
                       date_until=event_row[3],
                       town=event_row[4],
                       place=event_row[5],
-                      additional=event_row[6],
-                      info_url=event_row[7])
+                      additional="",
+                      info_url=event_row[6])
         events.append(event)
     return events
 
