@@ -19,20 +19,6 @@ db_connection = psycopg2.connect(DB_URI, sslmode="require")
 db_object = db_connection.cursor()
 
 
-@bot.message_handler(commands=['start'])
-def start_msg(message: types.Message):
-    user_id = message.from_user.id
-    terminate_operations(user_id)
-    db_object.execute(f"SELECT telegram_id FROM users WHERE telegram_id= %s", (user_id,))
-    result = db_object.fetchone()
-    if not result:
-        choose_lang(message)
-    else:
-        lang = get_lang_from_db(user_id=user_id)
-        bot.send_message(user_id, "Hello mf", reply_markup=types.ReplyKeyboardRemove())
-        show_menu(message=message)
-
-
 def terminate_operations(user_id: int):
     db_object.execute("DELETE FROM enrollments WHERE filled = FALSE")
     db_connection.commit()
@@ -42,10 +28,7 @@ def terminate_operations(user_id: int):
 
 def get_lang_from_db(user_id: int):
     db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
-    result = db_object.fetchone()
-    if not result:
-        return 'English'
-    lang = result[0]
+    lang = db_object.fetchone()[0].strip()
     return lang
 
 
@@ -69,8 +52,8 @@ def gen_main_menu(lang: str):
     main_menu = types.InlineKeyboardMarkup()
     buttons_text = locale_manager.menu_buttons(lang=lang)
     main_menu.add(
-        types.InlineKeyboardButton(f"enr", callback_data="show_events"),
-        types.InlineKeyboardButton(f"ch", callback_data="check_enrollments")
+        types.InlineKeyboardButton(f"{buttons_text[0]}", callback_data="show_events"),
+        types.InlineKeyboardButton(f"{buttons_text[1]}", callback_data="check_enrollments")
     )
     return main_menu
 
@@ -310,8 +293,22 @@ def determine_operation(user_id: int, operation_name: str):
     result = db_object.fetchone()
     if not result:
         return ""
-    res = str(result[0]).__eq__(operation_name.strip())
+    res = str(result[0]).strip().__eq__(operation_name.strip())
     return res
+
+
+@bot.message_handler(commands=['start'])
+def start_msg(message: types.Message):
+    user_id = message.from_user.id
+    terminate_operations(user_id)
+    db_object.execute(f"SELECT telegram_id FROM users WHERE telegram_id= %s", (user_id,))
+    result = db_object.fetchone()
+    if not result:
+        choose_lang(message)
+    else:
+        lang = get_lang_from_db(user_id=user_id)
+        bot.send_message(message.chat.id, locale_manager.greeting(lang), reply_markup=types.ReplyKeyboardRemove())
+        show_menu(message=message)
 
 
 @bot.message_handler(func=lambda message: message.text == 'English' or message.text == 'Українська')
