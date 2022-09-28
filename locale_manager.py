@@ -98,9 +98,11 @@ def insert_coach(lang: str):
 def insert_phone_number(lang: str):
     match lang:
         case 'English':
-            return 'Insert your phone number'
+            return 'Insert your phone number\n' \
+                   'Press the button below⬇️'
         case 'Українська':
-            return 'Введіть ваш номер телефону'
+            return 'Введіть ваш номер телефону\n' \
+                   'Натисність кнопку внизу ⬇️'
 
 
 def phone_number(lang: str):
