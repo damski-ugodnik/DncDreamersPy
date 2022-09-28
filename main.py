@@ -153,28 +153,28 @@ def show_chosen_event(call: types.CallbackQuery):
                                types.InlineKeyboardButton('Back', callback_data='show_events'),
                                )
                     if event.url is not None:
-                        markup.add(types.InlineKeyboardButton('Full information', url=event.url))
+                        markup.add(types.InlineKeyboardButton('Full information', callback_data="", url=event.url))
                 case 'Українська':
                     markup.add(types.InlineKeyboardButton('Записатися', callback_data=f'{event_id}_enroll'),
                                types.InlineKeyboardButton('Назад', callback_data='show_events'))
                     if event.url is not None:
-                        markup.add(types.InlineKeyboardButton('Повна інформація', url=event.url))
+                        markup.add(types.InlineKeyboardButton('Повна інформація', callback_data=" ", url=event.url))
             return markup
 
         def configure_text():
-            # if type(event.date_until) == datetime.datetime:
-            #     text = locale_manager.event_msg_format(get_lang_from_db(user_id))
-            #     return text.format(event_name=event.name,
-            #                        date=event.date_of_issue,
-            #                        town=event.town,
-            #                        address=event.place)
-            # else:
-            text = locale_manager.event_msg_long_format(get_lang_from_db(user_id))
-            return text.format(event_name=event.name,
-                               date=event.date_of_issue,
-                               date_until=event.date_until,
-                               town=event.town,
-                               address=event.place)
+            if type(event.date_until) == datetime.datetime:
+                text = locale_manager.event_msg_format(get_lang_from_db(user_id))
+                return text.format(event_name=event.name,
+                                   date=event.date_of_issue,
+                                   town=event.town,
+                                   address=event.place)
+            else:
+                text = locale_manager.event_msg_long_format(get_lang_from_db(user_id))
+                return text.format(event_name=event.name,
+                                   date=event.date_of_issue,
+                                   date_until=event.date_until,
+                                   town=event.town,
+                                   address=event.place)
 
         bot.send_message(user_id, configure_text(), reply_markup=gen_markup_for_event_msg())
 
