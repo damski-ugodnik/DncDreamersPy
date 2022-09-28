@@ -5,6 +5,7 @@ import psycopg2
 import telebot
 from flask import Flask, request
 from telebot import types
+import datetime
 
 import db_manager
 import locale_manager
@@ -161,7 +162,7 @@ def show_chosen_event(call: types.CallbackQuery):
             return markup
 
         def configure_text():
-            if not event.date_until:
+            if type(event.date_until) == datetime.datetime:
                 text = locale_manager.event_msg_format(get_lang_from_db(user_id))
                 return text.format(event_name=event.name,
                                    date=event.date_of_issue,
