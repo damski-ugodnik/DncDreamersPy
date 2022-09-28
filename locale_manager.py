@@ -200,15 +200,15 @@ def enrollment_msg_format(lang: str):
 def event_msg_long_format(lang: str):
     match lang:
         case 'English':
-            return "Participant:  {participant_name}\n" \
-                   "Event:        {event}\n" \
-                   "Dates:        {date} - {date_until}\n" \
-                   "Age category: {age_category}\n"
+            return "Name:    {event_name}\n" \
+                   "Dates:   {date} - {date_until}\n" \
+                   "Town:    {town}\n" \
+                   "Address: {address}\n"
         case 'Українська':
-            return "Учасник:          {participant_name}\n" \
-                   "Захід:            {event}\n" \
-                   "Дати:             {date} - {date_until}\n" \
-                   "Вікова категорія: {age_category}\n"
+            return "Назва:  {event_name}\n" \
+                   "Дати:   {date} - {date_until}\n" \
+                   "Місто:  {town}\n" \
+                   "Адреса: {address}\n"
 
 
 def events(lang: str):
