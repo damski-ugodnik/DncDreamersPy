@@ -94,9 +94,9 @@ def fetch_event(event_id: int):
                       date_of_issue=result[2],
                       date_until=result[3],
                       town=result[4],
-                      place=result[4],
-                      additional=result[5],
-                      info_url=result[6])
+                      place=result[5],
+                      additional=result[6],
+                      info_url=result[7])
     return res_event
 
 
