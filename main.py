@@ -207,7 +207,7 @@ def set_participant_type(message: types.Message):
     text: str
     typ = locale_manager.participant(lang)
     for t in typ:
-        if message.text.__eq__(t):
+        if message.text.__eq__(typ[t]):
             db_manager.set_type(user_id, message.text)
             if message.text == locale_manager.participant(lang)["couple"]:
                 text = locale_manager.insert_your_name_couple(lang)
