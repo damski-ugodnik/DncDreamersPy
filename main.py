@@ -261,12 +261,31 @@ def set_age_category(message: types.Message):
         for category in s:
             if message.text.__eq__(category):
                 db_manager.set_age_category(user_id, message.text)
+                markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+                classes = locale_manager.classes(lang)
+                markup.add(*classes[0])
+                markup.add(*classes[1])
+                bot.send_message(user_id, locale_manager.insert_class(lang), reply_markup=markup)
+                return
+    bot.send_message(user_id, locale_manager.insert_age_category(lang))
+
+
+@bot.message_handler(
+    func=lambda message: determine_operation(message.from_user.id, 'set_class') and not_command(message.text))
+def set_class(message: types.Message):
+    user_id = message.from_user.id
+    lang = get_lang_from_db(user_id)
+    classes = locale_manager.classes(lang)
+    for s in classes:
+        for _class in s:
+            if message.text.__eq__(_class):
+                db_manager.set_class(user_id, message.text)
                 phone_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
                 button = types.KeyboardButton(locale_manager.phone_number(lang), request_contact=True)
                 phone_markup.add(button)
                 bot.send_message(user_id, locale_manager.insert_phone_number(lang), reply_markup=phone_markup)
                 return
-    bot.send_message(user_id, locale_manager.insert_age_category(lang))
+    bot.send_message(user_id, locale_manager.insert_class(lang))
 
 
 @bot.message_handler(

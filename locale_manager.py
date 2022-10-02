@@ -65,10 +65,19 @@ def insert_your_name_couple(lang: str):
 def age_categories(lang: str):
     match lang:
         case 'English':
-            return [['Under 10', 'Under 12', 'Under 14', 'Under 16'], ['Under 19', 'Under 21', 'Over 21']]
+            return [['Under 10', 'Under 12', 'Under 14', 'Under 16'], ['Under 19', 'Under 21', 'Over 21', 'Pro-Am']]
         case 'Українська':
             return [['До 10 років', 'До 12 років', 'До 14 років', 'До 16 років'],
-                    ['До 19 років', 'До 21 року', 'Більше 21 року']]
+                    ['До 19 років', 'До 21 року', 'Більше 21 року', 'Про-Ам']]
+
+
+def classes(lang: str):
+    match lang:
+        case 'English':
+            return [['Attestation', 'N', 'E'], ['D', 'C', 'Rating']]
+        case 'Українська':
+            return [['Аттестація', 'N', 'E'],
+                    ['D', 'C', 'Рейтинг']]
 
 
 def insert_town(lang: str):
@@ -169,6 +178,14 @@ def ask_for_type(lang: str):
             return 'Insert the type of participant'
         case 'Українська':
             return 'Введіть тип учасника'
+
+
+def insert_class(lang: str):
+    match lang:
+        case 'English':
+            return 'Insert your dancing class'
+        case 'Українська':
+            return 'Введіть ваш танцювальний клас'
 
 
 def event_msg_format(lang: str):

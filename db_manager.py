@@ -60,8 +60,12 @@ def set_coach(user_id: int, coach: str):
 
 def set_age_category(user_id: int, age_category: str):
     set_str_param_and_operation(
-        user_id=user_id, param_name='age_category', param_value=age_category, operation_name='set_phone_number'
+        user_id=user_id, param_name='age_category', param_value=age_category, operation_name='class'
     )
+
+
+def set_class(user_id: int, _class: str):
+    set_str_param_and_operation(user_id, param_name='dance_class', param_value=_class, operation_name='set_phone_number')
 
 
 def set_phone_number(user_id: int, phone_number: str):
