@@ -204,13 +204,17 @@ def enroll_event(call: types.CallbackQuery):
 def set_participant_type(message: types.Message):
     user_id = message.from_user.id
     lang = get_lang_from_db(user_id)
-    db_manager.set_type(user_id, message.text)
     text: str
-    if message.text == locale_manager.participant(lang)["couple"]:
-        text = locale_manager.insert_your_name_couple(lang)
-    else:
-        text = locale_manager.insert_your_name_single(lang)
-    bot.send_message(message.from_user.id, text, reply_markup=types.ReplyKeyboardRemove())
+    typ = locale_manager.participant(lang)
+    for t in typ:
+        if message.text.__eq__(t):
+            db_manager.set_type(user_id, message.text)
+            if message.text == locale_manager.participant(lang)["couple"]:
+                text = locale_manager.insert_your_name_couple(lang)
+            else:
+                text = locale_manager.insert_your_name_single(lang)
+            bot.send_message(message.from_user.id, text, reply_markup=types.ReplyKeyboardRemove())
+    bot.send_message(user_id, locale_manager.ask_for_type(lang))
 
 
 @bot.message_handler(
@@ -239,16 +243,32 @@ def set_club(message: types.Message):
 
 
 @bot.message_handler(
+    func=lambda message: determine_operation(message.from_user.id, 'set_program') and not_command(message.text))
+def set_program(message: types.Message):
+    user_id = message.from_user.id
+    lang = get_lang_from_db(user_id)
+    programs = locale_manager.dance_programs(lang)
+    for pr in programs:
+        if message.text.__eq__(pr):
+            db_manager.set_program(user_id, message.text)
+            buttons = locale_manager.age_categories(lang)
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            markup.add(*buttons[0])
+            markup.add(*buttons[1])
+            bot.send_message(user_id, locale_manager.insert_age_category(lang), reply_markup=markup)
+    bot.send_message(user_id, locale_manager.insert_program(lang))
+
+
+@bot.message_handler(
     func=lambda message: determine_operation(message.from_user.id, 'set_coach') and not_command(message.text))
 def set_coach(message: types.Message):
     user_id = message.from_user.id
     db_manager.set_coach(user_id, message.text)
     lang = get_lang_from_db(user_id)
-    buttons = locale_manager.age_categories(lang)
+    buttons = locale_manager.dance_programs(lang)
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add(*buttons[0])
-    markup.add(*buttons[1])
-    bot.send_message(user_id, locale_manager.insert_age_category(lang), reply_markup=markup)
+    markup.add(*buttons)
+    bot.send_message(user_id, locale_manager.insert_program(lang), reply_markup=markup)
 
 
 @bot.message_handler(

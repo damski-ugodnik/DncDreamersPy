@@ -55,7 +55,7 @@ def set_club(user_id: int, club: str):
 
 def set_coach(user_id: int, coach: str):
     set_str_param_and_operation(user_id=user_id, param_name='coach', param_value=coach,
-                                operation_name='set_age_category')
+                                operation_name='set_program')
 
 
 def set_age_category(user_id: int, age_category: str):
@@ -64,8 +64,14 @@ def set_age_category(user_id: int, age_category: str):
     )
 
 
+def set_program(user_id: int, dance_program: str):
+    set_str_param_and_operation(user_id, param_name='dance_program', param_value=dance_program,
+                                operation_name='set_age_category')
+
+
 def set_class(user_id: int, _class: str):
-    set_str_param_and_operation(user_id, param_name='dance_class', param_value=_class, operation_name='set_phone_number')
+    set_str_param_and_operation(user_id, param_name='dance_class', param_value=_class,
+                                operation_name='set_phone_number')
 
 
 def set_phone_number(user_id: int, phone_number: str):

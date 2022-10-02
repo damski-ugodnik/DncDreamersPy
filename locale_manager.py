@@ -62,6 +62,22 @@ def insert_your_name_couple(lang: str):
             return 'Введіть ваше прізвище та ім\'я та П.І. партнера'
 
 
+def dance_programs(lang:str):
+    match lang:
+        case 'English':
+            return ['Ballroom', 'Latin', 'Both']
+        case 'Українська':
+            return ['Стандарт', 'Латина', 'Обидві']
+
+
+def insert_program(lang:str):
+    match lang:
+        case 'English':
+            return 'Insert your dancing program'
+        case 'Українська':
+            return 'Введіть вашу танцювальну програму'
+
+
 def age_categories(lang: str):
     match lang:
         case 'English':
