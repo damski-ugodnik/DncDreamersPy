@@ -37,7 +37,7 @@ def get_lang_from_db(user_id: int):
 def delete_enrollment(call: types.CallbackQuery):
     enr_id = int(call.data[:str(call.data).find('_delete')])
     db_manager.delete_enr(enr_id)
-    bot.answer_callback_query(call.id, f"Deleted {enr_id}")
+    bot.answer_callback_query(call.id, f"Deleted")
     back(call)
 
 
@@ -132,7 +132,6 @@ def show_events(call: types.CallbackQuery):
     events = db_manager.fetch_events()
     user_id = call.from_user.id
     text = "Upcoming events:" if get_lang_from_db(user_id) == 'English' else "Майбутні заходи"
-    bot.answer_callback_query(callback_query_id=call.id, text="available events")
     bot.send_message(chat_id=user_id, text=text, reply_markup=create_events_list(events=events))
 
 
