@@ -60,7 +60,7 @@ def set_coach(user_id: int, coach: str):
 
 def set_age_category(user_id: int, age_category: str):
     set_str_param_and_operation(
-        user_id=user_id, param_name='age_category', param_value=age_category, operation_name='class'
+        user_id=user_id, param_name='age_category', param_value=age_category, operation_name='set_class'
     )
 
 
