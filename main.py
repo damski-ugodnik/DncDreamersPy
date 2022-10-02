@@ -214,6 +214,7 @@ def set_participant_type(message: types.Message):
             else:
                 text = locale_manager.insert_your_name_single(lang)
             bot.send_message(message.from_user.id, text, reply_markup=types.ReplyKeyboardRemove())
+            return
     bot.send_message(user_id, locale_manager.ask_for_type(lang))
 
 
@@ -256,6 +257,7 @@ def set_program(message: types.Message):
             markup.add(*buttons[0])
             markup.add(*buttons[1])
             bot.send_message(user_id, locale_manager.insert_age_category(lang), reply_markup=markup)
+            return
     bot.send_message(user_id, locale_manager.insert_program(lang))
 
 
