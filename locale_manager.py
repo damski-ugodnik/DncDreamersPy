@@ -65,9 +65,9 @@ def insert_your_name_couple(lang: str):
 def dance_programs(lang:str):
     match lang:
         case 'English':
-            return ['Ballroom', 'Latin', 'Both']
+            return ['Ballroom', 'Latin', '10 dance']
         case 'Українська':
-            return ['Стандарт', 'Латина', 'Обидві']
+            return ['Стандарт', 'Латина', '10 танців']
 
 
 def insert_program(lang:str):
