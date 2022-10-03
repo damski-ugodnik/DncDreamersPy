@@ -1,3 +1,3 @@
 BOT_TOKEN = "5609125980:AAH7iwUCoe-Yu0xeE2f3gqwLEuq8sMZVHOQ"
 APP_URL = "https://dance-dreamer.herokuapp.com/" + BOT_TOKEN
-DB_URI = "postgres://anansgdoqcysxm:f40cda46907947f43d75cc74b4fa8b2058534b0dff132a485f502a86499b69b7@ec2-34-251-115-141.eu-west-1.compute.amazonaws.com:5432/deeg605qn66ojc"
+DB_URI = "postgres://jeapnlykfhgrhs:19acb86cf78b6939c24b4cdb298035e0ab31ca4a0d3225a030056217d441dcbf@ec2-54-228-201-167.eu-west-1.compute.amazonaws.com:5432/d4gvgagulbr0q4"
