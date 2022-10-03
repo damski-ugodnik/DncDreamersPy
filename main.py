@@ -29,10 +29,8 @@ def terminate_operations(user_id: int):
 
 def get_lang_from_db(user_id: int):
     db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
-    lang = db_object.fetchone()
-    if not lang:
-        return 'Українська'
-    return lang[0]
+    lang = db_object.fetchone()[0].strip()
+    return lang
 
 
 @bot.callback_query_handler(func=lambda call: str(call.data).find('_delete') > -1)
@@ -47,8 +45,8 @@ def delete_enrollment(call: types.CallbackQuery):
 def show_menu(message: types.Message):
     user_id = message.from_user.id
     terminate_operations(user_id)
-    bot.send_message(user_id, locale_manager.main_menu(lang=get_lang_from_db(user_id=user_id)),
-                     reply_markup=gen_main_menu(lang=get_lang_from_db(user_id=user_id)))
+    lang = get_lang_from_db(user_id=user_id)
+    bot.send_message(user_id, locale_manager.main_menu(lang=lang), reply_markup=gen_main_menu(lang=lang))
 
 
 def gen_main_menu(lang: str):
