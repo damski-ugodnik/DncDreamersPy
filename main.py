@@ -29,7 +29,7 @@ def terminate_operations(user_id: int):
 
 def get_lang_from_db(user_id: int):
     db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
-    lang = db_object.fetchone()[0]
+    lang = db_object.fetchone()
     if not lang:
         return 'Українська'
     return lang
