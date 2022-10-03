@@ -377,7 +377,7 @@ def lang_chosen(call: types.CallbackQuery):
         msg_to_send = locale_manager.lang_choice(lang)
     db_connection.commit()
     bot.send_message(user_id, msg_to_send, reply_markup=types.ReplyKeyboardRemove())
-    show_menu(message=call.message)
+    bot.send_message(user_id, locale_manager.main_menu(lang=lang), reply_markup=gen_main_menu(lang=lang))
 
 
 @bot.message_handler(commands=['changelang'])
