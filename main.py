@@ -32,7 +32,7 @@ def get_lang_from_db(user_id: int):
     lang = db_object.fetchone()
     if not lang:
         return 'Українська'
-    return lang
+    return lang[0]
 
 
 @bot.callback_query_handler(func=lambda call: str(call.data).find('_delete') > -1)
