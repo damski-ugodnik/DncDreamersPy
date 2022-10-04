@@ -20,6 +20,7 @@ db_connection = psycopg2.connect(DB_URI, sslmode="require")
 db_object = db_connection.cursor()
 lang = 'Українська'
 
+
 def terminate_operations(user_id: int):
     db_object.execute("DELETE FROM enrollments WHERE filled = FALSE AND user_id = %s", (user_id,))
     db_connection.commit()
@@ -344,7 +345,6 @@ def start_msg(message: types.Message):
     result = db_object.fetchone()
     if not result:
         db_object.execute("INSERT INTO users(telegram_id, lang) VALUES (%s, %s)", (user_id, lang))
-        locale_manager.greeting(lang=lang)
     bot.send_message(message.chat.id, locale_manager.greeting(lang), reply_markup=types.ReplyKeyboardRemove())
     show_menu(message=message)
 
