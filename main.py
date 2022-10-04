@@ -21,7 +21,7 @@ db_object = db_connection.cursor()
 
 
 def terminate_operations(user_id: int):
-    db_object.execute("DELETE FROM enrollments WHERE filled = FALSE AND user_id = {user_id}")
+    db_object.execute(f"DELETE FROM enrollments WHERE filled = FALSE AND user_id = {user_id}")
     db_connection.commit()
     db_object.execute("UPDATE users SET current_operation = null WHERE telegram_id = %s", (user_id,))
     db_connection.commit()
