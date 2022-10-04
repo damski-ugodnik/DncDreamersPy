@@ -4,6 +4,7 @@ import main
 from main import db_object, db_connection, bot, types
 from datetime import date
 import locale_manager
+from main import lang
 
 
 def init_enrollment(event_id: int, user_id: int):
@@ -37,9 +38,8 @@ def set_town(user_id: int, town: str):
 def set_club(user_id: int, club: str):
     db_object.execute(f"SELECT participant_type FROM enrollments WHERE user_id = {user_id} AND filled = FALSE")
     p_type = db_object.fetchone()[0]
-    eg = locale_manager.participant(main.get_lang_from_db(user_id=user_id))["coach"]
+    eg = locale_manager.participant(main.lang)["coach"]
     operation: str
-    lang = main.get_lang_from_db(user_id)
     if str(p_type).strip().__eq__(eg):
         operation = 'set_phone_number'
         phone_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
