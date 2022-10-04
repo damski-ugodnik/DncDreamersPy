@@ -8,6 +8,10 @@ from main import lang
 
 
 def init_enrollment(event_id: int, user_id: int):
+    db_object.execute(f"SELECT telegram_id FROM users WHERE telegram_id = {user_id}")
+    if not db_object.fetchone():
+        db_object.execute(f"INSERT INTO users(telegram_id) VALUES ({user_id})")
+        db_connection.commit()
     db_object.execute(f"SELECT enrollment_id FROM enrollments WHERE filled = FALSE AND user_id = {user_id}")
     res = db_object.fetchall()
     if not not res:
