@@ -18,7 +18,7 @@ logger = telebot.logger
 logger.setLevel(logging.DEBUG)
 db_connection = psycopg2.connect(DB_URI, sslmode="require")
 db_object = db_connection.cursor()
-
+lang = 'Українська'
 
 def terminate_operations(user_id: int):
     db_object.execute(f"DELETE FROM enrollments WHERE filled = FALSE AND user_id = {user_id}")
@@ -27,10 +27,12 @@ def terminate_operations(user_id: int):
     db_connection.commit()
 
 
-def get_lang_from_db(user_id: int):
-    db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
-    lang = db_object.fetchone()[0].strip()
-    return lang
+# def get_lang_from_db(user_id: int):
+#     db_object.execute(f"SELECT lang FROM users WHERE telegram_id = %s", (user_id,))
+#     lang = db_object.fetchone()
+#     if not lang:
+#         return ''
+#     return lang
 
 
 @bot.callback_query_handler(func=lambda call: str(call.data).find('_delete') > -1)
@@ -45,11 +47,10 @@ def delete_enrollment(call: types.CallbackQuery):
 def show_menu(message: types.Message):
     user_id = message.from_user.id
     terminate_operations(user_id)
-    lang = get_lang_from_db(user_id=user_id)
-    bot.send_message(user_id, locale_manager.main_menu(lang=lang), reply_markup=gen_main_menu(lang=lang))
+    bot.send_message(user_id, locale_manager.main_menu(lang=lang), reply_markup=gen_main_menu())
 
 
-def gen_main_menu(lang: str):
+def gen_main_menu():
     main_menu = types.InlineKeyboardMarkup()
     buttons_text = locale_manager.menu_buttons(lang=lang)
     main_menu.add(
@@ -73,7 +74,7 @@ def create_enrollments_list(enrollments: dict[str, str]):
 def check_enrollments(call: types.CallbackQuery):
     user_id = call.from_user.id
     enrollments = db_manager.fetch_enrollments(user_id)
-    text = "Your enrollments:" if get_lang_from_db(user_id) == 'English' else "Ваші записи:"
+    text = "Your enrollments:" if lang == 'English' else "Ваші записи:"
     bot.send_message(user_id, text, reply_markup=create_enrollments_list(enrollments))
 
 
@@ -86,7 +87,6 @@ def show_chosen_enrollment(call: types.CallbackQuery):
         enrollment = db_manager.fetch_enrollment(enrollment_id)
 
         def gen_markup_for_enrollment_msg():
-            lang = get_lang_from_db(user_id)
             markup = types.InlineKeyboardMarkup(row_width=3)
             match lang:
                 case 'English':
@@ -99,7 +99,7 @@ def show_chosen_enrollment(call: types.CallbackQuery):
             return markup
 
         def configure_text():
-            return locale_manager.enrollment_msg_format(get_lang_from_db(user_id)).format(
+            return locale_manager.enrollment_msg_format(lang).format(
                 participant_name=enrollment[0],
                 event=enrollment[1],
                 date=enrollment[2],
@@ -123,15 +123,14 @@ def create_events_list(events):
 @bot.callback_query_handler(func=lambda call: call.data == 'menu')
 def back(call: types.CallbackQuery):
     user_id = call.from_user.id
-    lang = get_lang_from_db(user_id=user_id)
-    bot.send_message(user_id, locale_manager.main_menu(lang=lang), reply_markup=gen_main_menu(lang=lang))
+    bot.send_message(user_id, locale_manager.main_menu(lang=lang), reply_markup=gen_main_menu())
 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'show_events')
 def show_events(call: types.CallbackQuery):
     events = db_manager.fetch_events()
     user_id = call.from_user.id
-    text = "Upcoming events:" if get_lang_from_db(user_id) == 'English' else "Майбутні заходи"
+    text = "Upcoming events:" if lang == 'English' else "Майбутні заходи"
     bot.send_message(chat_id=user_id, text=text, reply_markup=create_events_list(events=events))
 
 
@@ -144,7 +143,6 @@ def show_chosen_event(call: types.CallbackQuery):
         event = db_manager.fetch_event(event_id=event_id)
 
         def gen_markup_for_event_msg():
-            lang = get_lang_from_db(user_id)
             markup = types.InlineKeyboardMarkup(row_width=2)
             match lang:
                 case 'English':
@@ -162,13 +160,13 @@ def show_chosen_event(call: types.CallbackQuery):
 
         def configure_text():
             if type(event.date_until) == datetime.datetime:
-                text = locale_manager.event_msg_format(get_lang_from_db(user_id))
+                text = locale_manager.event_msg_format(lang)
                 return text.format(event_name=event.name,
                                    date=event.date_of_issue,
                                    town=event.town,
                                    address=event.place)
             else:
-                text = locale_manager.event_msg_long_format(get_lang_from_db(user_id))
+                text = locale_manager.event_msg_long_format(lang)
                 return text.format(event_name=event.name,
                                    date=event.date_of_issue,
                                    date_until=event.date_until,
@@ -189,7 +187,6 @@ def enroll_event(call: types.CallbackQuery):
     if call.data.endswith("_enroll"):
         event_id = int(call.data[:call.data.find("_enroll")])
         user_id = call.from_user.id
-        lang = get_lang_from_db(user_id=user_id)
         db_manager.init_enrollment(event_id=event_id, user_id=user_id)
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         text = locale_manager.participant(lang)
@@ -202,7 +199,6 @@ def enroll_event(call: types.CallbackQuery):
     func=lambda message: determine_operation(message.from_user.id, 'set_type') and not_command(message.text))
 def set_participant_type(message: types.Message):
     user_id = message.from_user.id
-    lang = get_lang_from_db(user_id)
     text: str
     typ = locale_manager.participant(lang)
     for t in typ:
@@ -221,7 +217,6 @@ def set_participant_type(message: types.Message):
     func=lambda message: determine_operation(message.from_user.id, 'set_name') and not_command(message.text))
 def set_name(message: types.Message):
     user_id = message.from_user.id
-    lang = get_lang_from_db(user_id)
     db_manager.set_name(user_id=user_id, name=message.text)
     bot.send_message(user_id, locale_manager.insert_town(lang))
 
@@ -230,7 +225,6 @@ def set_name(message: types.Message):
     func=lambda message: determine_operation(message.from_user.id, 'set_town') and not_command(message.text))
 def set_town(message: types.Message):
     user_id = message.from_user.id
-    lang = get_lang_from_db(user_id)
     db_manager.set_town(user_id=user_id, town=message.text)
     bot.send_message(user_id, locale_manager.insert_club(lang))
 
@@ -246,7 +240,6 @@ def set_club(message: types.Message):
     func=lambda message: determine_operation(message.from_user.id, 'set_program') and not_command(message.text))
 def set_program(message: types.Message):
     user_id = message.from_user.id
-    lang = get_lang_from_db(user_id)
     programs = locale_manager.dance_programs(lang)
     for pr in programs:
         if message.text.__eq__(pr):
@@ -265,7 +258,6 @@ def set_program(message: types.Message):
 def set_coach(message: types.Message):
     user_id = message.from_user.id
     db_manager.set_coach(user_id, message.text)
-    lang = get_lang_from_db(user_id)
     buttons = locale_manager.dance_programs(lang)
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(*buttons)
@@ -276,7 +268,6 @@ def set_coach(message: types.Message):
     func=lambda message: determine_operation(message.from_user.id, 'set_age_category') and not_command(message.text))
 def set_age_category(message: types.Message):
     user_id = message.from_user.id
-    lang = get_lang_from_db(user_id)
     categories = locale_manager.age_categories(lang)
     for s in categories:
         for category in s:
@@ -295,7 +286,6 @@ def set_age_category(message: types.Message):
     func=lambda message: determine_operation(message.from_user.id, 'set_class') and not_command(message.text))
 def set_class(message: types.Message):
     user_id = message.from_user.id
-    lang = get_lang_from_db(user_id)
     classes = locale_manager.classes(lang)
     for s in classes:
         for _class in s:
@@ -314,7 +304,6 @@ def set_class(message: types.Message):
     content_types=['contact'])
 def set_phone_number(message: types.Message):
     user_id = message.from_user.id
-    lang = get_lang_from_db(user_id)
     db_manager.set_phone_number(user_id, message.contact.phone_number)
     markup = types.InlineKeyboardMarkup(row_width=2)
     button_yes = types.InlineKeyboardButton(locale_manager.yes(lang), callback_data='True')
@@ -326,7 +315,6 @@ def set_phone_number(message: types.Message):
 @bot.callback_query_handler(func=lambda call: determine_operation(call.from_user.id, 'set_info_processing'))
 def set_info_processing(call: types.CallbackQuery):
     user_id = call.from_user.id
-    lang = get_lang_from_db(user_id)
     if call.data.__eq__('True'):
         db_manager.set_info_processing(user_id, True)
     else:
@@ -334,7 +322,7 @@ def set_info_processing(call: types.CallbackQuery):
                          reply_markup=types.ReplyKeyboardRemove())
 
     bot.send_message(user_id, locale_manager.enrollment_thanks(lang), reply_markup=types.ReplyKeyboardRemove())
-    bot.send_message(user_id, locale_manager.main_menu(lang=lang), reply_markup=gen_main_menu(lang=lang))
+    bot.send_message(user_id, locale_manager.main_menu(lang=lang), reply_markup=gen_main_menu())
     db_object.execute(f"UPDATE enrollments SET filled = {True} WHERE user_id = {user_id}")
     db_connection.commit()
 
@@ -357,7 +345,6 @@ def start_msg(message: types.Message):
     if not result:
         choose_lang(message)
     else:
-        lang = get_lang_from_db(user_id=user_id)
         bot.send_message(message.chat.id, locale_manager.greeting(lang), reply_markup=types.ReplyKeyboardRemove())
         show_menu(message=message)
 
@@ -377,7 +364,7 @@ def lang_chosen(call: types.CallbackQuery):
         msg_to_send = locale_manager.lang_choice(lang)
     db_connection.commit()
     bot.send_message(user_id, msg_to_send, reply_markup=types.ReplyKeyboardRemove())
-    bot.send_message(user_id, locale_manager.main_menu(lang=lang), reply_markup=gen_main_menu(lang=lang))
+    bot.send_message(user_id, locale_manager.main_menu(lang=lang), reply_markup=gen_main_menu())
 
 
 @bot.message_handler(commands=['changelang'])
