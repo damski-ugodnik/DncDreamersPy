@@ -21,7 +21,7 @@ db_object = db_connection.cursor()
 lang = 'Українська'
 
 def terminate_operations(user_id: int):
-    db_object.execute(f"DELETE FROM enrollments WHERE filled = FALSE AND user_id = {user_id}")
+    db_object.execute("DELETE FROM enrollments WHERE filled = FALSE AND user_id = %s", (user_id,))
     db_connection.commit()
     db_object.execute("UPDATE users SET current_operation = null WHERE telegram_id = %s", (user_id,))
     db_connection.commit()
@@ -343,7 +343,8 @@ def start_msg(message: types.Message):
     db_object.execute(f"SELECT telegram_id FROM users WHERE telegram_id= %s", (user_id,))
     result = db_object.fetchone()
     if not result:
-        choose_lang(message)
+        db_object.execute("INSERT INTO users(telegram_id, lang) VALUES (%s, %s)", (user_id, lang))
+        locale_manager.greeting(lang=lang)
     else:
         bot.send_message(message.chat.id, locale_manager.greeting(lang), reply_markup=types.ReplyKeyboardRemove())
         show_menu(message=message)
@@ -351,7 +352,6 @@ def start_msg(message: types.Message):
 
 @bot.callback_query_handler(func=lambda call: call.data == "English" or call.data == "Українська")
 def lang_chosen(call: types.CallbackQuery):
-    lang = call.data
     user_id = call.from_user.id
     db_object.execute("SELECT telegram_id FROM users WHERE telegram_id = %s", (user_id,))
     result = db_object.fetchone()
