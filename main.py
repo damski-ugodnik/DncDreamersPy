@@ -345,9 +345,8 @@ def start_msg(message: types.Message):
     if not result:
         db_object.execute("INSERT INTO users(telegram_id, lang) VALUES (%s, %s)", (user_id, lang))
         locale_manager.greeting(lang=lang)
-    else:
-        bot.send_message(message.chat.id, locale_manager.greeting(lang), reply_markup=types.ReplyKeyboardRemove())
-        show_menu(message=message)
+    bot.send_message(message.chat.id, locale_manager.greeting(lang), reply_markup=types.ReplyKeyboardRemove())
+    show_menu(message=message)
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "English" or call.data == "Українська")
