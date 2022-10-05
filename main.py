@@ -329,12 +329,15 @@ def set_info_processing(call: types.CallbackQuery):
 
 
 def determine_operation(user_id: int, operation_name: str):
-    db_object.execute(f"SELECT current_operation FROM users WHERE telegram_id = {user_id}")
-    result = db_object.fetchone()
-    if not result:
-        return ""
-    res = str(result[0]).strip().__eq__(operation_name.strip())
-    return res
+    try:
+        db_object.execute(f"SELECT current_operation FROM users WHERE telegram_id = {user_id}")
+        result = db_object.fetchone()
+        if not result:
+            return ""
+        res = str(result[0]).strip().__eq__(operation_name.strip())
+        return res
+    except psycopg2.DatabaseError:
+        db_object.execute("ROLLBACK")
 
 
 @bot.message_handler(commands=['start'])
