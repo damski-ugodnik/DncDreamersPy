@@ -107,14 +107,15 @@ def show_chosen_enrollment(call: types.CallbackQuery):
                     date=enrollment[2],
                     type=enrollment[3]
                 )
-            return locale_manager.enrollment_msg_format(lang).format(
-                participant_name=enrollment[0],
-                event=enrollment[1],
-                date=enrollment[2],
-                type=enrollment[3],
-                age_category=enrollment[4],
-                dance_class=enrollment[5],
-                dance_program=enrollment[6]
+            else:
+                return locale_manager.enrollment_msg_format(lang).format(
+                    participant_name=enrollment[0],
+                    event=enrollment[1],
+                    date=enrollment[2],
+                    type=enrollment[3],
+                    age_category=enrollment[4],
+                    dance_class=enrollment[5],
+                    dance_program=enrollment[6]
             )
 
         bot.send_message(user_id, configure_text(), reply_markup=gen_markup_for_enrollment_msg())
