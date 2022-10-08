@@ -100,7 +100,7 @@ def show_chosen_enrollment(call: types.CallbackQuery):
             return markup
 
         def configure_text():
-            if str(enrollment[3]).__eq__(locale_manager.participant(lang)['coach'].__str__()):
+            if str(enrollment[3]).__eq__('Тренер'):
                 return locale_manager.enrollment_msg_coach_format(lang).format(
                     participant_name=enrollment[0],
                     event=enrollment[1],
