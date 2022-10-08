@@ -100,13 +100,21 @@ def show_chosen_enrollment(call: types.CallbackQuery):
             return markup
 
         def configure_text():
+            if str(enrollment[3]).__eq__(locale_manager.participant(lang)['coach']):
+                return locale_manager.enrollment_msg_coach_format(lang).format(
+                    participant_name=enrollment[0],
+                    event=enrollment[1],
+                    date=enrollment[2],
+                    type=enrollment[3]
+                )
             return locale_manager.enrollment_msg_format(lang).format(
                 participant_name=enrollment[0],
                 event=enrollment[1],
                 date=enrollment[2],
-                age_category=enrollment[3],
-                dance_class=enrollment[4],
-                dance_program=enrollment[5]
+                type=enrollment[3],
+                age_category=enrollment[4],
+                dance_class=enrollment[5],
+                dance_program=enrollment[6]
             )
 
         bot.send_message(user_id, configure_text(), reply_markup=gen_markup_for_enrollment_msg())
@@ -162,7 +170,7 @@ def show_chosen_event(call: types.CallbackQuery):
             return markup
 
         def configure_text():
-            if type(event.date_until) == datetime.datetime:
+            if type(event.date_until) != datetime.datetime:
                 text = locale_manager.event_msg_format(lang)
                 return text.format(event_name=event.name,
                                    date=event.date_of_issue,

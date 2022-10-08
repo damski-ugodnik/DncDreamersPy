@@ -144,7 +144,7 @@ def fetch_enrollments(user_id: int):
 
 def fetch_enrollment(enrollment_id):
     db_object.execute(
-        f"SELECT participant_name, event_name, date_of_issue, age_category, dance_class, dance_program FROM enrollments INNER JOIN events e on e.id = enrollments.event_id and enrollment_id = {enrollment_id}")
+        f"SELECT participant_name, event_name, date_of_issue, participant_type, age_category, dance_class, dance_program FROM enrollments INNER JOIN events e on e.id = enrollments.event_id and enrollment_id = {enrollment_id}")
     result = db_object.fetchone()
     return result
 

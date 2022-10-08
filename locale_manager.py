@@ -62,7 +62,7 @@ def insert_your_name_couple(lang: str):
             return 'Введіть ваше прізвище та ім\'я та П.І. партнера'
 
 
-def dance_programs(lang:str):
+def dance_programs(lang: str):
     match lang:
         case 'English':
             return ['Ballroom', 'Latin', '10 dance']
@@ -70,7 +70,7 @@ def dance_programs(lang:str):
             return ['Стандарт', 'Латина', '10 танців']
 
 
-def insert_program(lang:str):
+def insert_program(lang: str):
     match lang:
         case 'English':
             return 'Insert your dancing program'
@@ -229,9 +229,24 @@ def enrollment_msg_format(lang: str):
             return "Учасник:          {participant_name}\n" \
                    "Захід:            {event}\n" \
                    "Дата:             {date}\n" \
+                   "Тип:              {type}\n" \
                    "Вікова категорія: {age_category}\n" \
                    "Клас:             {dance_class}\n" \
                    "Програма:         {dance_program}"
+
+
+def enrollment_msg_coach_format(lang: str):
+    match lang:
+        case 'English':
+            return "Participant:  {participant_name}\n" \
+                   "Event:        {event}\n" \
+                   "Date:         {date}\n" \
+                   "Age category: {age_category}\n"
+        case 'Українська':
+            return "Учасник:  {participant_name}\n" \
+                   "Захід:    {event}\n" \
+                   "Дата:     {date}\n" \
+                   "Тип:      {type}"
 
 
 def event_msg_long_format(lang: str):
