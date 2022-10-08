@@ -229,7 +229,9 @@ def enrollment_msg_format(lang: str):
             return "Учасник:          {participant_name}\n" \
                    "Захід:            {event}\n" \
                    "Дата:             {date}\n" \
-                   "Вікова категорія: {age_category}\n"
+                   "Вікова категорія: {age_category}\n" \
+                   "Клас:             {dance_class}\n" \
+                   "Програма:         {dance_program}"
 
 
 def event_msg_long_format(lang: str):

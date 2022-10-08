@@ -104,7 +104,9 @@ def show_chosen_enrollment(call: types.CallbackQuery):
                 participant_name=enrollment[0],
                 event=enrollment[1],
                 date=enrollment[2],
-                age_category=enrollment[3]
+                age_category=enrollment[3],
+                dance_class=enrollment[4],
+                dance_program=enrollment[5]
             )
 
         bot.send_message(user_id, configure_text(), reply_markup=gen_markup_for_enrollment_msg())
