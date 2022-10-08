@@ -170,7 +170,7 @@ def show_chosen_event(call: types.CallbackQuery):
             return markup
 
         def configure_text():
-            if type(event.date_until) != datetime.datetime:
+            if str(event.date_until).__eq__('None'):
                 text = locale_manager.event_msg_format(lang)
                 return text.format(event_name=event.name,
                                    date=event.date_of_issue,
